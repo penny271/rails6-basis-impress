@@ -1,0 +1,28 @@
+<% @title = "ログイン" %>
+
+<div id="login-form">
+  <h1><%= @title %></h1>
+
+  <%# ¥ model: に関しては、フォームオブジェクトも可能 必ずしもDBのテーブルである必要なし 20230723 %>
+  <%= form_with model: @form, url: :staff_session do |f| %>
+    <div>
+      <%= f.label :email, "メールアドレス" %>
+      <%= f.text_field :email %>
+    </div>
+    <div>
+      <%= f.label :password, "パスワード" %>
+      <%= f.password_field :password %>
+    </div>
+    <div>
+      <%= f.submit "ログイン" %>
+    </div>
+  <% end %>
+</div>
+
+
+<%# routes.rbより %>
+<%#     post "sessions" => "sessions#create", as: :session %>
+
+
+<%# input タグの name 属性に"staff_login_form[password]" という値が指定されています。 これらの値を パラメータ（parameters）と呼びます。パラメータに角括弧（[]）が含まれている場合、角括弧の前にある部分（ staff_login_form）を プレフィックス(prefix)と呼び、角括弧の内側にある部分（ email や password）を フィールド名(field name)と呼びます。 プレフィックスは form_with メソッドの model オプションに指定したオブジェクトのクラス名から導き出されます。ここでのクラス名は Staff::LoginForm ですので、クラス名を構成する単語を分解して、すべて小文字に変え、アンダースコア（_）で連結した staff_login_form がプレフィックスとなります。なお、 form_with メソッドの scope オプションを用いれば、プレフィックスを変更でき %>
+

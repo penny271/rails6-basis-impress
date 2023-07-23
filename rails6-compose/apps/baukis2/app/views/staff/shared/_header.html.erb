@@ -1,0 +1,35 @@
+<header>
+  <span class="logo-mark">BAUKIS2</span>
+  <%# ¥ content_tag は第1引数にタグの名前を、第2引数にその中身を指定してHTML要素を生成するヘルパーメソッドです。オプションはそのままタグの属性になります %>
+  <%= content_tag(:span, flash.notice, class: "notice") if flash.notice %>
+  <%= content_tag(:span, flash.alert, class: "alert") if flash.alert %>
+
+  <%=
+    if current_staff_member
+      link_to "ログアウト", :staff_session, method: :delete
+    else
+      link_to "ログイン", :staff_login
+    end
+  %>
+</header>
+
+<%# ! link_to で :staff_loginとurlパスを文字列でなく、シンボルで指定しているため　 名前空間をオプションでpathを変えても影響がない!! 20230724 %>
+
+
+<%#  ¥ content_tag を使わなくても下記のように書ける 20230723 %>
+<%
+=begin
+%>
+
+<%= content_tag(:span, flash.notice, class: "notice") if flash.notice %> は下記と同じ 20230723
+<% if flash.notice %>
+  <span class="notice"><%= flash.notice %></span>
+<% end %>
+
+<%
+=end
+%>
+
+
+<%# ¥ 名前空間が指定されているため :sessionではなく :staff_sessionとする必要あり!! 20230723 %>
+<%# ! GET以外で別のページへ遷移を行いたい場合は method: が必須! %>

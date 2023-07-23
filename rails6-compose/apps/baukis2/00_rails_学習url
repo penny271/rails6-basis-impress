@@ -1,0 +1,8 @@
+http://example.com:3000/
+
+http://baukis2.example.com:3000/
+
+http://0.0.0.0:3000/staff
+
+githubオリジナル
+https://github.com/kuroda/baukis2/blob/gamma/config/environments/development.rb

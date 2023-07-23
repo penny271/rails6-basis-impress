@@ -1,0 +1,5 @@
+/* ¥ cssを完全に分離する */
+/*
+ *= require_tree ./shared
+ *= require_tree ./admin
+ */

@@ -3,6 +3,8 @@ Rails.application.configure do
 
   # Code is not reloaded between requests.
   config.cache_classes = true
+  # ! 6.2.1　 準備作業 本章では、 production モードにおけるアプリケーションの振る舞いをカスタマイズします。通常、このモードではソースコードを変更してもアプリケーション自体を再起動しない限りアプリケーションの振る舞いに反映されませんが、それでは開発しにくいので、一時的に設定を変更します  falseに変更 20230723
+  # config.cache_classes = false
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers

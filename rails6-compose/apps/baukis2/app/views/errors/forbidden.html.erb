@@ -1,0 +1,17 @@
+<div id="error">
+  <h1>403 Forbidden</h1>
+  <p>
+    <%=
+      # application_controller.rbより@exceptionには例外オブジェクトが格納されている
+      case @exception
+      when ApplicationController::IpAddressRejected
+        "あなたのIPアドレス（#{request.ip}）からは利用できません。"
+      else
+        "指定されたページを閲覧する権限がありません。"
+      end
+    %>
+  </p>
+</div>
+
+
+<%# !  ApplicationController::IpAddressRejected  また、これらのクラスは ApplicationController クラスの中で定義されています。この場合、 ApplicationController がモジュールとしての役割を果たし、それらの名前空間となります。すなわち、 ApplicationController の文脈以外で参照するときは、 ApplicationController::Forbidden や ApplicationController::IpAddressRejected のように書かなければなりません。 %>
