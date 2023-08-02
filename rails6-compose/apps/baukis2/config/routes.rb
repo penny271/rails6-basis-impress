@@ -1,7 +1,18 @@
 Rails.application.routes.draw do
   config = Rails.application.config.baukis2
   # ¥ 下記は実験 コメントアウト 名前空間なし ver.
-  # root "temporary#index"
+  root "temporary#index"
+
+  puts("config[:admin][:host]:: #{config[:admin][:host]}")
+  puts("config[:staff][:host]:: #{config[:staff][:host]}")
+  puts("config[:staff][:path]:: #{config[:staff][:path]}")
+  puts(Rails.application.config.hosts)
+
+  # constraints host: "example.com" do
+  #   get "login" => "staff/sessions#new", as: :login
+  # end
+
+  # get "login" => "staff/sessions#new", as: :login
 
   # namespace  :staff do
   # ¥ /staff/login から /login に変わる path ""でurlのpathを変えたため 20230724
