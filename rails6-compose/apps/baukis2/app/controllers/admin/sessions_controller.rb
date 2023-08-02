@@ -9,6 +9,9 @@ class Admin::SessionsController < Admin::Base
   end
 
   def create
+    # ¥ formのinputタグのnameのプレフィクス admin_login_form paramsとして渡すことでこの2つの属性をフォームに付与できる 20230802
+    # <input type="text" name="admin_login_form[email]" id="admin_login_form_email">
+    # <input type="password" name="admin_login_form[password]" id="admin_login_form_password">
     @form = Admin::LoginForm.new(params[:admin_login_form])
     if @form.email.present?
       administrator =

@@ -3,6 +3,7 @@
 <div id="login-form">
   <h1><%= @title %></h1>
 
+<%# ¥ url: :admin_session とあることから admin/session_controller に postされ、その中にある createメソッドが自動で走る 20230802 %>
   <%= form_with model: @form, url: :admin_session do |f| %>
     <div>
       <%= f.label :email, "メールアドレス" %>
