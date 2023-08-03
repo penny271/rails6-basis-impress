@@ -1,5 +1,6 @@
 <header>
-  <span class="logo-mark">BAUKIS2</span>
+  <%# <span class="logo-mark">BAUKIS2</span> %>
+  <%= link_to "BAUKIS2", :staff_root, class: "logo-mark" %>
   <%# ¥ content_tag は第1引数にタグの名前を、第2引数にその中身を指定してHTML要素を生成するヘルパーメソッドです。オプションはそのままタグの属性になります %>
   <%= content_tag(:span, flash.notice, class: "notice") if flash.notice %>
   <%= content_tag(:span, flash.alert, class: "alert") if flash.alert %>

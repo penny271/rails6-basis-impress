@@ -29,12 +29,12 @@
           <%= m.suspended? ? raw("&#x2611;") : raw("&#x2610;") %></td>
         <td class="actions">
         <%# ! 20230725 よくわからない %>
-        <%# ¥ _pathヘルパーを用いて書いた場合 20230802 %>
-        <%# ^ <%= link_to "編集", edit_admin_staff_member_path(m) %>
 
         <%# 結果: <a href="/admin/staff_members/6/edit">編集</a> %>
         <%# <a data-confirm="本当に削除しますか？" rel="nofollow" data-method="delete" href="/admin/staff_members/6">削除</a> %>
         <%# ¥ m には自動で idが入る %>
+        <%# ¥ _pathヘルパーを用いて書いた場合 20230802 %>
+        <%# ^ <%= link_to "編集", edit_admin_staff_member_path(m) %>
           <%= link_to "編集", [ :edit, :admin, m ] %> |
           <%= link_to "削除", [ :admin, m ], method: :delete,
             data: { confirm: "本当に削除しますか？" } %>
