@@ -1,5 +1,8 @@
 # class Staff::TopController < ApplicationController
 class Staff::TopController < Staff::Base
+  # ! 20230806 ここで skip_before_action しないと、ログインしていないユーザーはtopページにたどり着けないため設定している
+  skip_before_action :authorize
+
   def index
     # raise # エラー確認用
     render action: "index"

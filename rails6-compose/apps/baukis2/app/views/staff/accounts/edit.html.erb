@@ -1,0 +1,15 @@
+<% @title = "アカウント情報編集" %>
+<h1><%= @title %></h1>
+
+<div id="generic-form">
+  <%= form_with model: @staff_member, url: :staff_account do |f| %>
+    <%= render "form", f: f %>
+    <div class="buttons">
+      <%= f.submit "更新" %>
+      <%= link_to "キャンセル", :staff_account %>
+    </div>
+  <% end %>
+</div>
+
+<%# ¥  20230805 インスタンス変数 @staff_member には、自分自身の StaffMember オブジェクトがセットされています。フォームデータの送信先はルーティング名:staff_account で指定されています。 PATCH メソッドで staff/accounts#update アクションに対してデータが送信されます。 フォームデータの送信に使用されるHTTPメソッドは、form_withメソッドの modelオプションに指定したモデルオブジェクトがデータベースに保存されているかどうか（id属性に値がセットされているかどうか）で決まります。保存前ならPOSTメソッド、保存済みならPATCHメソッドが選択されます
+%>

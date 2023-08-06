@@ -1,0 +1,47 @@
+<% @title = "職員の新規登録" %>
+<h1><%= @title %></h1>
+
+<div id="generic-form">
+<%# ¥ @staff_member = StaffMember.new を controllerから受け取っている %>
+<%# ¥ @staff_memberの中身が StaffMember.new であることを railsが確認し、動作がcreateだと認識する %>
+<%# ¥urlは /admin/staff_members となる urlのstaff_membersは routes.rb の resource :staff_members を見ているので urlが staff_members となる %>
+<%# ! Railsが正しいコントローラとアクションを推測するために使用するのは、変数名（@staff_memberまたは@xxx）ではなく、実際のモデル名（StaffMember）です。 %>
+  <%= form_with model: @staff_member, url: [ :admin, @staff_member ] do |f| %>
+    <%# formというパーシャルビューをレンダリングし、フォームビルダオブジェクトfを渡します。このフォームパーシャルには実際のフォームフィールドが含まれます。 %>
+    <%= render "form", f: f %>
+    <div class="buttons">
+      <%= f.submit "登録" %>
+      <%# ! 20230805 resources :staff_membersとすることで railsがCRUDのルート名を自動で作成する rails routes で確認できる %>
+      <%= link_to "キャンセル", :admin_staff_members %>
+    </div>
+  <% end %>
+</div>
+
+<%# ¥説明 %>
+
+<<%
+=begin
+%>
+
+<%= form_with model： admin, @staff_member ] do |f| %>: この行はform_withヘルパーを使ってフォームを開始します： [ :admin, @staff_member ] do |f| %>: この行はform_withヘルパーを使ってフォームを開始します。モデル staff_memberの部分はフォームが関連するオブジェクトとして@staff_memberを設定します。
+
+このオブジェクトはStaffMemberモデルのインスタンスである可能性が高く、フォームのフィールドはこのオブジェクトの属性を反映するように自動的に設定されます。URLは [admin, @staff_member ] の部分はフォームが完了したときに送信されるURLを設定します。このURLは、@staff_memberが新規レコードか既存レコードかに応じて、Adminコントローラの@staff_memberオブジェクトのshowまたはupdateアクションになります。
+
+<%= render "form", f: f %>: この行はformというパーシャルビューをレンダリングし、フォームビルダオブジェクトfを渡します。このフォームパーシャルには実際のフォームフィールドが含まれます。
+
+<%= f.submit "登録" %>: "登録" (日本語で "登録 "または "サインアップ "を意味します)というラベルのフォームの送信ボタンを作成します。
+
+<%= link_to "キャンセル", :admin_staff_members %>: ラベル "キャンセル"（日本語で "キャンセル "の意味）のリンクを作成します。
+
+<%
+=end
+%>>
+
+<%# ¥説明2 20230805 %>
+<%# url： [admin, @staff_member]を指定します： Railsはシンボル:adminを見て、ルートの名前空間として識別します。次に@staff_member変数を見ます。staff_memberがStaffMemberモデルの新しいインスタンス (@staff_member = StaffMember.new) の場合、Railsは新しいスタッフを作成したいのだと推測し、admin/staff_membersルートのcreateアクション用のURL (通常は/admin/staff_membersのようなもの) を生成します。staff_memberが既存のインスタンス (つまりデータベースから取得されたもの) の場合、Railsはこの既存のスタッフメンバーを更新したいと推測し、更新アクションのURLを生成します (通常は /admin/staff_members/1 のようなもので、1が@staff_memberのIDです)。
+
+のようなURLを生成します： [admin, @xxx]： xxxがStaffMemberモデルの新規インスタンスまたは既存インスタンスの場合（つまり、@xxx = StaffMember.newまたは@xxx = StaffMember.find(params[:id])）、Railsはこれを最初の例と同じように解釈します。このURLは、@xxxが新規インスタンスの場合はcreateアクションに、@xxxが既存インスタンスの場合はupdateアクションになります。Railsが正しいコントローラとアクションを推測するために使用するのは、変数名（@staff_memberまたは@xxx）ではなく、実際のモデル名（StaffMember）です。
+
+生成される正確なURLは、config/routes.rbファイルのroutes設定に依存します。提供された設定から、staff_membersリソースはadmin名前空間の下で定義されているようです。つまり、Railsはすべてのstaff_membersアクションのパスの先頭に/adminを追加します。
+
+admin名前空間にpath:オプションも定義されていますね。config[:admin][:path]に何かが設定されていれば、すべてのadminルートのプレフィックスとして/adminの代わりにそれが使われます。例えば、config[:admin][:path]が/managementの場合、staff_membersアクションのパスは/management/staff_membersと/management/staff_members/1のようになります。%>

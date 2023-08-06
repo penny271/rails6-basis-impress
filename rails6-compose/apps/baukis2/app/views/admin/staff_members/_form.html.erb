@@ -1,0 +1,63 @@
+<div class="notes">
+  <span class="mark">*</span> 印の付いた項目は入力必須です。
+</div>
+<div>
+  <%= f.label :email, "メールアドレス", class: "required" %>
+  <%= f.email_field :email, size: 32, required: true %>
+</div>
+
+<%# ¥ 下記のようにhtml上では表示される 20230805 %>
+<%#
+<input type="email" name="staff_member[email]" id="staff_member_email">
+<input type="password" name="staff_member[password]" id="staff_member_password">
+%>
+
+<%# ¥  .new_record の使い方 新規作成と編集画面でpasswordフィールドの表示を使いわけるために使用 20230805
+このフォームが扱っているオブジェクト（ f.object）がデータベースに保存済みかどうかを調べています。未保存の場合に条件式が成立します。モデルオブジェクトの new_record? メソッドは、データベースに保存されていないときに真値を返します。
+
+パスワードはハッシュ化されてデータベースに記録されているので、フォームフィールドのデフォルト値として使用できません。そのため、他の属性と並べて編集フォームに組み込んでしまうと、職員アカウントを更新するたびにパスワードを設定することになり実用的ではありません。そこで、パスワード変更機能は『機能拡張編』で別途作成しています%>
+<%# ¥ 新規作成時のみ表示されるようにしている %>
+<% if f.object.new_record? %>
+  <div>
+    <%= f.label :password, "パスワード", class: "required" %>
+    <%= f.password_field :password, size: 32, required: true %>
+  </div>
+<% end %>
+<div>
+  <%= f.label :family_name, "氏名", class: "required" %>
+  <%= f.text_field :family_name, required: true %>
+  <%= f.text_field :given_name, required: true %>
+</div>
+<div>
+  <%= f.label :family_name_kana, "フリガナ", class: "required" %>
+  <%= f.text_field :family_name_kana, required: true %>
+  <%= f.text_field :given_name_kana, required: true %>
+</div>
+<div>
+  <%= f.label :start_date, "入社日", class: "required" %>
+  <%= f.date_field :start_date, required: true %>
+</div>
+<div>
+  <%= f.label :end_date, "退職日" %>
+  <%= f.date_field :end_date %>
+</div>
+<div class="check-boxes">
+  <%= f.check_box :suspended %>
+  <%= f.label :suspended, "アカウント停止" %>
+</div>
+
+<%# ¥ 位置引数とキーワード引数   :password は一引数 / class: "required"はキーワード引数  %>
+
+<%
+=begin
+%>
++++++++++++++++++++  20230805  +++++++++++++++++++++++++
+f は 下記 new.html.erb の fから引き継いでいる(このfはフォームビルダーを返すメソッド)
+このフォームビルダーを用いて、フォームの部品を生成する
+
+  <%= form_with model: @staff_member, url: [ :admin, @staff_member ] do |f| %>
+    <%= render "form", f: f %>
+
+<%
+=end
+%>

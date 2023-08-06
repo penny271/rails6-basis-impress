@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   config = Rails.application.config.baukis2
   # ¥ 下記は実験 コメントアウト 名前空間なし ver.
-  root "temporary#index"
+  # root "temporary#index"
 
   puts("config[:admin][:host]:: #{config[:admin][:host]}")
   puts("config[:staff][:host]:: #{config[:staff][:host]}")
@@ -53,7 +53,17 @@ Rails.application.routes.draw do
       # delete "staff_members/:id" => "staff_members#destroy" # 職員の削除
 
       # ¥ 上記を1行で書ける
-      resources :staff_members
+      # ! 20230805 :staff_members が コントロール名となる
+      # ! 20230805 railsが自動で ルート名を作成する rails routes で確認できる
+      # resources :staff_members
+      # ¥ 20230806 ネストされたリソース
+      #  - ルーティング結果:
+      # - admin_staff_member_staff_events GET    /admin/staff_members/:staff_member_id/staff_events(.:format)    admin/staff_events#index {:host=>"baukis2.example.com"}
+      resources :staff_members do
+        resources :staff_events, only: [:index]
+      end
+      resources :staff_events, only: [:index]
+      # -ルーティング結果: GET /admin/staff_events  | ルーティング名: :admin_staff_events
     end # end of namespace
   end
 

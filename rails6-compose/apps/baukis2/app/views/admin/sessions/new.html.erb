@@ -8,6 +8,10 @@
     <div>
       <%= f.label :email, "メールアドレス" %>
       <%= f.text_field :email %>
+      <%# ! 20230805 Ruby on Railsフレームワークでは、form_withヘルパーメソッドを使うと、Railsは渡したモデルオブジェクトに基づいてフォームフィールドのname属性を自動的に作成します。
+      @form = Admin::LoginForm.new なので name="admin_login_form[xxx]" となる
+      %>
+      <%# <input type="text" name="admin_login_form[email]" id="admin_login_form_email">   %>
     </div>
     <div>
       <%= f.label :password, "パスワード" %>

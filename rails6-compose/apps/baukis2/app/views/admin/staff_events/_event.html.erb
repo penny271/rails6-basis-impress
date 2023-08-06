@@ -1,0 +1,27 @@
+<tr>
+  <% unless @staff_member %>
+  <td>
+  <%# ¥ event は、呼び出し元の render メソッドの collection オプションに指定されている配列（@events）の各要素を返すヘルパーメソッドです( render partial: "event")。つまり、配列@events の個数だけ tr 要素が生成され、その中には職員の氏名、イベントの種別、イベントの発生時刻が記載されます %>
+    <%= link_to(event.member.family_name + event.member.given_name,
+      [ :admin, event.member, :staff_events ]) %>
+  </td>
+  <% end %>
+  <%# - eventヘルパーメソッドは  @events = @staff_member.events.order(occurred_at: :desc) から 生成されるので staff_memberごとの event の typeを予め持っている 20230806 %>
+  <td><%= event.description %></td>
+  <td class="date">
+    <%= event.occurred_at.strftime("%Y/%m/%d %H:%M:%S") %>
+  </td>
+</tr>
+
+
+<%
+=begin
+%>
+
+    <%= render partial: "event", collection: @events %>
+から   event
+
+
+<%
+=end
+%>

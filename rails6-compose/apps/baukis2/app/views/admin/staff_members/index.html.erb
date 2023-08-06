@@ -7,6 +7,8 @@
     <%= link_to "新規登録", :new_admin_staff_member %>
   </div>
 
+  <%= paginate @staff_members %>
+
   <table class="listing">
     <tr>
       <th>氏名</th>
@@ -35,7 +37,12 @@
         <%# ¥ m には自動で idが入る %>
         <%# ¥ _pathヘルパーを用いて書いた場合 20230802 %>
         <%# ^ <%= link_to "編集", edit_admin_staff_member_path(m) %>
+        <%# ! staff_members/6/editのURLについては、/staff_membersはadmin名前空間のstaff_membersコントローラに由来し、6はStaffMemberオブジェクトのid、editはアクション名です。 %>
           <%= link_to "編集", [ :edit, :admin, m ] %> |
+          <%# ¥ 20230806 ネストされたリソース %>
+          <%= link_to "Events", [:admin, m, :staff_events] %> |
+          <%# - link_to "Events", admin_staff_member_staff_events_path(m) と上記は同義 %>
+          <%# 実際のhtml <a href="/admin/staff_members/27/staff_events">Events</a> %>
           <%= link_to "削除", [ :admin, m ], method: :delete,
             data: { confirm: "本当に削除しますか？" } %>
         </td>
@@ -43,7 +50,32 @@
     <% end %>
   </table>
 
+  <%= paginate @staff_members %>
+
   <div class="links">
     <%= link_to "新規登録", :new_admin_staff_member %>
   </div>
 </div>
+
+<%# ¥ 20230805  link_to "編集", [ :edit, :admin, m ]  のurlを作る仕組み
+
+Rails では、URL ヘルパーはコントローラの名前 (通常はリソースの名前と一致します) の前に任意の名前空間を付けて作成します。あなたの場合、URLのstaff_membersの部分はadmin名前空間で定義されたStaffMembersControllerから来ています。
+
+link_toに[ :edit, :admin, m ]のような配列構文を使うと、Railsのルーティングシステムは配列で指定された要素に基づいて正しいURLを自動的に推測します。
+
+以下がその仕組みです：
+
+:edit: これはコントローラのeditアクションを指し、通常は既存のレコードを編集するフォームを表示します。
+admin： admin名前空間を指します。Railsの名前空間は、URLでもファイル構造でも、関連するコントローラを共通のプレフィックスでグループ化する方法です。
+m: これは、eachループで繰り返し処理される個々のStaffMemberオブジェクトです。Railsはこのオブジェクトを使ってURLの:id部分を埋めます。
+:edit、:admin、mを組み合わせると、RailsはIDがmであるStaffMemberレコードに対して、admin名前空間の下にあるstaff_membersコントローラのeditアクションを指すURLを生成します。
+
+この[ :edit, :admin, m ]構文は、Railsの「Convention over Configuration」原則を活用した省略記法です。URL全体を手作業で書き出す代わりに、必要な部分のみを指定して、あとはRailsの規約に基づいて推測させることができます。
+
+staff_members/6/editのURLについては、/staff_membersはadmin名前空間のstaff_membersコントローラに由来し、6はStaffMemberオブジェクトのid、editはアクション名です。
+
+つまり、Railsが[ :edit, :admin, m ]を見ると、admin名前空間の下にあるidがmのStaffMemberのeditアクションを指すURLが生成されます。これで/admin/staff_members/6/editとなります。
+
+www.DeepL.com/Translator（無料版）で翻訳しました。
+
+%>

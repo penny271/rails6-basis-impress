@@ -12,6 +12,10 @@
       link_to "ログイン", :staff_login
     end
   %>
+
+  <%# 20230805 %>
+  <%= link_to "アカウント", :staff_account if current_staff_member %>
+
 </header>
 
 <%# ! link_to で :staff_loginとurlパスを文字列でなく、シンボルで指定しているため　 名前空間をオプションでpathを変えても影響がない!! 20230724 %>

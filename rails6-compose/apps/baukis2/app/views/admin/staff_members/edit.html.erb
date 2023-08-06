@@ -1,0 +1,16 @@
+<% @title = "職員アカウントの編集" %>
+<h1><%= @title %></h1>
+
+<%# ¥ @staff_memberの中身が 既存のデータ であることを railsが確認し、動作が edit だと認識する %>
+<%# ¥ 既存のデータがDBに登録されいるため、フォームに情報が入力された状態で表示される 20230805 %>
+<div id="generic-form">
+  <%= form_with model: @staff_member, url: [ :admin, @staff_member ] do |f| %>
+    <%= render "form", f: f %>
+    <div class="buttons">
+      <%= f.submit "更新" %>
+      <%= link_to "キャンセル", :admin_staff_members %>
+    </div>
+  <% end %>
+</div>
+
+<%=  %>

@@ -1,0 +1,39 @@
+<%# Link to the "First" page
+  - available local variables
+    url:           url to the first page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote
+-%>
+<span class="first">
+  <%=
+    link_to_unless(current_page.first?,
+      t("views.pagination.first").html_safe, url) do |name|
+      content_tag(:span, name, class: "disabled")
+    end
+  %>
+</span>
+
+<%# ¥ 20230806 kaminari %>
+<%# link_to_unless(condition, name, options = {}, html_options = {}, &block)： これは、条件が真でない限りリンクを作成するRailsヘルパーメソッドです。条件がtrueの場合、名前はリンクなしでレンダリングされます。
+
+current_page.first? このメソッド呼び出しは、現在のページが最初のページかどうかをチェックします。最初のページである場合、条件はtrueになります。
+
+t("views.pagination.first").html_safe： これはRailsの国際化（i18n）システムの呼び出しです。"views.pagination.first "のローカライズ文字列を取得し、安全なHTMLとしてマークします。これがリンク名として使われます。
+
+url： これは最初のページのURLになります。
+
+do |name|...end： これは条件が真のとき、つまり現在のページが最初のページであるときに実行されるブロックである。この場合、リンクはクラス "disabled "のspan要素に置き換えられる。nameはspan要素のコンテンツとして使用されます。
+
+content_tag(:span, name, class: "disabled")： これは、クラス "disabled "と名前をコンテンツとするspan要素を作成するヘルパーです。
+
+要約すると、このコードは最初のページへのリンクを生成します。しかし、現在のページが最初のページである場合、代わりにdisabled span要素を生成します。
+
+
+
+
+
+
+
+www.DeepL.com/Translator（無料版）で翻訳しました。 %>

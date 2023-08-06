@@ -1,0 +1,41 @@
+<%
+  if @staff_member
+    full_name = @staff_member.family_name + @staff_member.given_name
+    @title = "#{full_name}さんのログイン・ログアウト記録"
+  else
+    @title = "職員のログイン・ログアウト記録"
+  end
+%>
+<h1><%= @title %></h1>
+
+<div class="table-wrapper">
+  <div class="links">
+    <%= link_to "職員一覧", :admin_staff_members %>
+  </div>
+
+<%# ¥ 20230806 kaminari %>
+<%# ^ ヘルパーメソッド paginate は、 page メソッド実行済みの Relation オブジェクトを受け取り、その位置にページネーションのためのリンクの列を生成します。  %>
+  <%= paginate @events %>
+
+  <table class="listing">
+    <tr>
+      <% unless @staff_member %><th>氏名</th><% end %>
+      <th>種別</th>
+      <th>日時</th>
+    </tr>
+    <%# ¥ 20230806 部分テンプレートを埋め込む render メソッドはこれまでにも何度か登場していますが、今回は呼び出し方が異なります。 partial オプションに部分テンプレートの名前、 collection オプションに配列を指定しています。 この呼び出し方をした場合、配列の要素数だけ部分テンプレートが繰り返しこの位置に埋め込まれます。 %>
+    <%= render partial: "event", collection: @events %>
+    <% if @events.empty? %>
+      <tr>
+        <%= content_tag(:td, "記録がありません",
+          colspan: @staff_member ? 2 : 3, style: "text-align: center") %>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= paginate @events %>
+
+  <div class="links">
+    <%= link_to "職員一覧", :admin_staff_members %>
+  </div>
+</div>
