@@ -36,3 +36,31 @@ end
 # また、あるモジュールが他のモジュールに依存していることを宣言する方法も提供します。モジュールAがモジュールBをインクルードし、モジュールBがActiveSupport::Concernをextendsした場合、モジュールAがインクルードされると、モジュールBのすべてのメソッド（クラスとインスタンスの両方）が自動的にモジュールAで利用できるようになります。
 
 # 提供されたコードでは、StringNormalizerは文字列を正規化するモジュールです。extend ActiveSupport::Concernを使うことで、StringNormalizerを他のクラスやモジュールにインクルードすることができます。
+
+
+module Greetable
+  def greet
+    "Hello!"
+  end
+end
+
+class Person
+  include Greetable
+end
+
+person = Person.new
+puts person.greet  # => "Hello!"
+
+
+
+module Announcer
+  def announce
+    "I'm a class method!"
+  end
+end
+
+class Loudspeaker
+  extend Announcer
+end
+
+puts Loudspeaker.announce  # => "I'm a class method!"

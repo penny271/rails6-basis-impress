@@ -2,7 +2,7 @@ class StaffMember < ApplicationRecord
   #  ¥ 20230806 app/controllers/concerns/string_normalizer.rbより
   # - 値の正規化 = ある規則に従うように情報を変換すること
   # - バリデーション = ある属性の値が規則に従っているかどうかを検証すること
-include StringNormalizer
+  include StringNormalizer
 
   # ¥ 20230806 一対多の関連付け
   # ¥ クラスメソッド has_many は一対多の関連付けを設定します。引数に指定されたシンボルが関連付けの名前となります。このシンボルと同名のインスタンスメソッドが定義されるので、関連付けの名前は既存の属性やインスタンスメソッドの名前と被らないように選択する必要があります。 class_name オプションには、関連付けの対象モデルのクラス名を指定します。関連付けの名前からクラス名が推定できる場合は class_name オプションは省略可能です。
@@ -11,6 +11,7 @@ include StringNormalizer
 
   #  - モデルオブジェクトに対してバリデーション、保存、削除などの操作が行われる前後に実行される処理を コールバック（callbacks）または フック（hooks）と呼びます。ここで使用されている ActiveRecord::Base のクラスメソッド before_validation は、指定されたブロックをバリデーションの直前に実行されるコールバックとして登録します。すなわち、 StaffMember オブジェクトに対してバリデーションが行われる直前に、下記のコードが実行されます。
   before_validation do
+    self.email = normalize_as_email(email)
     self.family_name = normalize_as_name(family_name)
     self.given_name = normalize_as_name(given_name)
     self.family_name_kana = normalize_as_furigana(family_name_kana)
@@ -20,8 +21,12 @@ include StringNormalizer
   # - 1個以上のカタカナ文字列にマッチする正規表現を定数 KATAKANA_REGEXP にセットしている
   KATAKANA_REGEXP = /\A[\p{katakana}\u{30fc}]+\z/
 
+  #  ¥ 20230809 valid_email_2 gem を使い、 email属性をvalidatesするよう指示している。 email": true
+  # By setting "valid_email_2/email": true, you're activating the validation provided by the valid_email_2 gem for the email attribute.
+  validates :email, presence: true, "valid_email_2/email": true, uniqueness: {case_sensitive: false}
+
   # ! 20230806 validation失敗時のhtmlの反応
-  # フォームから送信されたデータのバリデーションが失敗した場合、Railsはフォームを再表示する際に自動でラベルと入力フィールドを <div class="field_with_errors"> と </div> で囲みます。ラベルの文字色を赤色、入力フィールドの背景色をピンク色に指定する <= scss
+  #- フォームから送信されたデータのバリデーションが失敗した場合、Railsはフォームを再表示する際に自動でラベルと入力フィールドを <div class="field_with_errors"> と </div> で囲みます。ラベルの文字色を赤色、入力フィールドの背景色をピンク色に指定する <= scss
 
   # - 20230806 validateメソッド
   # ¥ 20230806 値が空(tabや空白も)のときに失敗

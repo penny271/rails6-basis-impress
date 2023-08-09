@@ -5,6 +5,7 @@
   <div class="links">
   <%# ¥ 編集画面へ resourceメソッドで自動でルーティング名が規約に則って決定されている 20230805 %>
     <%= link_to "アカウント情報編集", :edit_staff_account %>
+    <%= link_to "パスワード変更", :edit_staff_password %>
   </div>
 
   <table class="attributes">
@@ -27,6 +28,10 @@
       <td class="email">
         <%= @staff_member.email %>
       </td>
+    </tr>
+    <tr>
+      <th>パスワード</th>
+      <td class="password">***********</td>
     </tr>
     <tr>
       <th>入社日</th>
