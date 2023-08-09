@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       # ¥ 単数リソース 自分自身の情報を変更したり参照したりする 20230724
       #  ! コントローラ名はstaff/accounts(複数形)になる!!
       resource :account, except: [ :new, :create, :destroy]
+      resource :password, only: [ :show, :edit, :update] # 20230809
     end
   end
 

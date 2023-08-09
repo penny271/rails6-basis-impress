@@ -13,7 +13,6 @@ class Admin::StaffMembersController < Admin::Base
   end
 
   def show
-    # ¥ urlサーチバーのクエリが
     staff_member = StaffMember.find(params[:id])
     redirect_to [:edit, :admin, staff_member]
     # ¥ 下記のようにも書ける rails routes で確認できる 20230804
@@ -24,6 +23,8 @@ class Admin::StaffMembersController < Admin::Base
     @staff_member = StaffMember.new
   end
 
+  # ¥ http://baukis2.example.com:3000/admin/staff_members/6/edit
+  # !クリック時の <a href="/admin/staff_members/6/edit">編集</a> の 6が params[:id] に入る!!
   def edit
     @staff_member = StaffMember.find(params[:id])
   end
