@@ -1,0 +1,27 @@
+<% @title = "顧客の新規登録" %>
+<h1><%= @title %></h1>
+
+<div id="generic-form">
+  <%= form_with model: @customer_form, scope: "form",
+        url: :staff_customers do |f| %>
+    <%= render "form", f: f %>
+    <div class="buttons">
+      <%= f.submit "登録" %>
+      <%= link_to "キャンセル", :staff_customers %>
+    </div>
+  <% end %>
+</div>
+
+<%# ¥ 20230813 form_with の scopeオプションとは? %>
+<%# ヘルパーメソッド form_with に指定されている scope オプションについて説明します。 form_with によって生成されるHTMLフォームの各フィールドの名前は、一般に次のような形式を持っています。
+
+x[y]
+
+x を プレフィックス、 y を属性名と呼びます。 form_with は、デフォルトでは model オプションに指定されたオブジェクトのクラス名からプレフィックスを導き出します。そのオブジェクトが StaffMember クラスのインスタンスであれば、プレフィックスは staff_member となり、 StaffMember オブジェクトの email 属性のフィールドの名前は staff_member[email] となります。
+
+そして、アクション側でこのフィールドに入力された値を取得するコードは、 params[:staff_member][:email] となります。
+また、プレフィックスはフォーム内に置かれたHTML要素の id 属性の接頭辞としても使われます。
+
+さて、ここではインスタンス変数@customer_form には Staff::CustomerForm オブジェクトがセットされていますので、デフォルトでは staff_customer_form がプレフィックスとなります。先に述べたようにプレフィックスはソースコードのさまざまな場面で使われるので、長いパラメータ名はソースコードが読みにくくなる原因になります。
+
+これを解消するのが scope オプションです。 form_with メソッドの scope オプションに文字列を指定すると、それがプレフィックスとして使われるようになります。 %>

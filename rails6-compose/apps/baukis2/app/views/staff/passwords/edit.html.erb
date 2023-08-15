@@ -2,9 +2,16 @@
 <h1><%= @title %></h1>
 
 <div id="generic-form">
+  <%# ¥ @change_password_form = Staff::ChangePasswordForm.new(object: current_staff_member) %>
+  <%# ! Form helpers: If you're using Rails form helpers(例: form_with), they can automatically wrap form fields with a specific CSS class (usually "field_with_errors") when there's an error with that field. This allows you to style these fields differently (e.g., with a red border) to visually indicate errors. %>
   <%= form_with model: @change_password_form, url: :staff_password,
         method: :patch do |f| %>
+    <%
+=begin
+%>
     <div>
+    <%# ! このハッシュは def update に返す ハッシュ - 自分で自由に設定できる 20230810 %>
+    <%# ! controller側では、 入力内容をparams[:staff_change_password_form]で一括取得できる %>
       <%= f.label :current_password, "現在のパスワード" %>
       <%= f.password_field :current_password, size: 32, required: true %>
     </div>
@@ -17,6 +24,25 @@
       <%= f.password_field :new_password_confirmation, size: 32,
         required: true %>
     </div>
+    <div class="buttons">
+      <%= f.submit "変更" %>
+      <%= link_to "キャンセル", :staff_account %>
+    </div>
+
+<%
+=end
+%>
+
+    <%# -htmlビルダーで書き換え 20230811  %>
+    <%= markup do |m|
+      p = FormPresenter.new(f, self)
+      p.with_options(required: true, size: 32) do |q|
+        m << q.password_field_block(:current_password, "現在のパスワード")
+        m << q.password_field_block(:new_password, "新しいパスワード")
+        m << q.password_field_block(:new_password_confirmation,
+          "新しいパスワード（確認）")
+      end
+    end %>
     <div class="buttons">
       <%= f.submit "変更" %>
       <%= link_to "キャンセル", :staff_account %>

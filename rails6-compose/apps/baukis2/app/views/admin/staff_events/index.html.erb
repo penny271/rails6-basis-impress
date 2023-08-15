@@ -24,7 +24,21 @@
       <th>日時</th>
     </tr>
     <%# ¥ 20230806 部分テンプレートを埋め込む render メソッドはこれまでにも何度か登場していますが、今回は呼び出し方が異なります。 partial オプションに部分テンプレートの名前、 collection オプションに配列を指定しています。 この呼び出し方をした場合、配列の要素数だけ部分テンプレートが繰り返しこの位置に埋め込まれます。 %>
+    <%
+=begin
+%>
+
     <%= render partial: "event", collection: @events %>
+
+<%
+=end
+%>
+  <%# ^ 20230811 モデルプレゼンター使用 %>
+  <% @events.each do |event| %>
+    <%= StaffEventPresenter.new(event, self).table_row %>
+  <% end %>
+
+
     <% if @events.empty? %>
       <tr>
         <%= content_tag(:td, "記録がありません",

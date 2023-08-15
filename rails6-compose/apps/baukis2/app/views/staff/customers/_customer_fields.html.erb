@@ -1,0 +1,69 @@
+<%# ¥20230813 フォームビルダーのインスタンスメソッド fields_for を用いて、フォームの対象となるオブジェクトを切り替えています。このメソッドは2つの引数を取ります。第1引数が「レコード名」で、第2引数が対象となるオブジェクトです。 %>
+<%# - まとめると f はメインのフォームモデル @customer_form のフォームビルダです。ff は @customer_form に関連付けられた顧客用のネストされたフォームビルダーです。f は全体的なフォームを処理し、ff は顧客に関連するフィールドを処理します。これにより、@customer_form 全体のコンテキスト内で Customer オブジェクトの属性を管理することができます。 %>
+
+<%# ¥ Railsのフォームビルダのコンテキストでは、f.objectはフォームビルダ（f）がラップしている、または関連付けられているオブジェクトを指します。 %>
+<%# 分解してみましょう： %>
+<%# ^ f: これはフォームビルダのインスタンスです。form_with modelを実行すると customer_formとすると、Railsはフォームフィールドの生成に役立つフォームビルダのインスタンスを自動的に生成します。このフォームビルダのインスタンスは通常、ブロック内でfで参照されます。%>
+
+<%#-  f.objectです： フォームビルダ内で、objectはフォームビルダがラップしている元のオブジェクト（またはモデル）を返すメソッドです。具体的な例では、form_with model とします： とすると、f.object は @customer_form のインスタンスを返します。 %>
+
+<%#-  f.object.customerは@customer_formのインスタンスを返します： f.object.customer:これは単純にもう一段階掘り下げます。f.object.customer：これは、@customer_formオブジェクトに関連付けられた顧客を取得します。customer_formにcustomerという名前のメソッドや属性があれば、それを返します。  %>
+<%# customer_form.rbの中身: attr_accessor :customer #¥ setter, getterを設定している
+def initialize(customer = nil); @customer = customer %>
+
+<%#- つまり、@customer_formがStaff::CustomerFormのインスタンス(あなたのeditアクションにあるように)であれば、f.objectは@customer_formと等価であり、f.object.customerは@customer_form.customerと等価です。 %>
+
+<%#- あなたの質問に直接答えますと、f.objectは@customer_formが何で構成されていても構成されています。フォームビルダーのコンテキスト内でアクセスされるだけで、本質的には同じオブジェクトです。 %>
+
+<%= f.fields_for :customer, f.object.customer do |ff| %>
+  <%= markup do |m|
+    p = CustomerFormPresenter.new(ff, self)
+    p.with_options(required: true) do |q|
+      m << q.text_field_block(:email, "メールアドレス", size: 32)
+      m << q.password_field_block(:password, "パスワード", size: 32)
+      m << q.full_name_block(:family_name, :given_name, "氏名")
+      m << q.full_name_block(:family_name_kana, :given_name_kana, "フリガナ")
+    end
+    m << p.date_field_block(:birthday, "生年月日")
+    m << p.gender_field_block
+    m.div(class: "input-block") do
+      m << p.decorated_label(:personal_phones, "電話番号")
+      # ol orderd list 番号順リスト
+      m.ol do
+      # - 部分テンプレート phone_fields に対して、フォームビルダー（ ff）の他に Phone オブジェクト（ phone）と番号（ index）を渡しています。これらの情報が、電話番号の入力欄を生成するのに必要となります。
+        p.object.personal_phones.each_with_index do |phone, index|
+          m << render("phone_fields", f: ff, phone: phone, index: index)
+        end
+      end
+    end
+
+  end %>
+<% end %>
+<%# ¥ このフォームの役割を思い出してください。 Customer モデル、 HomeAddress モデル、 WorkAddress モデルという3種類のモデルを同時に取り扱うフォームです。しかし、この部分テンプレートでは Customer モデルに関連するフィールドだけを生成します。そこで、 fields_for メソッドによって対象オブジェクトを切り替えたのです。  %>
+
+<%# ¥ さて、 fields_for メソッドを用いるとフィールド名の形式が変化します。たとえば、 email 属性のフィールド名は、 form[customer][email] となります。先頭の form は「16.3.4 ERBテンプレート本体の作成」 で説明したプレフィックスです。1番目の角括弧内の customer が fields_for の第1引数で指定したレコード名です。そして2番目の角括弧内の email が属性名です。 %>
+
+<%# ¥ この結果、フォームからの送信データを受け取るアクション側では、 params[:form][:customer][:email] というコードで基本情報セクションの email フィールドに記入された値を取得できることになります。また、 params[:form][:customer] というコードで基本情報セクションの各フィールドに記入された値を含むハッシュを取得できます。このハッシュは、そのまま Customer オブジェクトの assign_attributes メソッドに引数として指定できます。ただし、事前にStrong Parametersのフィルターを通す必要があります。  %>
+
+<%
+=begin
+%>
+
+<fieldset id="customer-fields">
+  <legend>基本情報</legend>
+  <div class="input-block">
+  <label class="required" for="form_customer_email">メールアドレス</label><input required="required" size="32" type="text" value="ito.ichiro@example.jp" name="form[customer][email]" id="form_customer_email">
+  </div><div class="input-block">
+  <label class="required" for="form_customer_family_name">氏名</label><input required="required" type="text" value="伊藤" name="form[customer][family_name]" id="form_customer_family_name"><input required="required" type="text" value="一郎" name="form[customer][given_name]" id="form_customer_given_name">
+  </div><div class="input-block">
+  <label class="required" for="form_customer_family_name_kana">フリガナ</label><input required="required" type="text" value="イトウ" name="form[customer][family_name_kana]" id="form_customer_family_name_kana"><input required="required" type="text" value="イチロウ" name="form[customer][given_name_kana]" id="form_customer_given_name_kana">
+  </div><div class="input-block">
+  <label for="form_customer_birthday">生年月日</label><input value="1975-12-31" type="date" name="form[customer][birthday]" id="form_customer_birthday">
+  </div><div class="radio-buttons">
+  <label for="form_customer_gender">性別</label><input type="radio" value="male" checked="" name="form[customer][gender]" id="form_customer_gender_male"><label for="form_customer_gender_male">男性</label><input type="radio" value="female" name="form[customer][gender]" id="form_customer_gender_female"><label for="form_customer_gender_female">女性</label>
+  </div>
+</fieldset>
+
+<%
+=end
+%>

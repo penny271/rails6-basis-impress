@@ -3,9 +3,9 @@ Rails.application.routes.draw do
   # ¥ 下記は実験 コメントアウト 名前空間なし ver.
   # root "temporary#index"
 
-  puts("config[:admin][:host]:: #{config[:admin][:host]}")
-  puts("config[:staff][:host]:: #{config[:staff][:host]}")
-  puts("config[:staff][:path]:: #{config[:staff][:path]}")
+  # puts("config[:admin][:host]:: #{config[:admin][:host]}")
+  # puts("config[:staff][:host]:: #{config[:staff][:host]}")
+  # puts("config[:staff][:path]:: #{config[:staff][:path]}")
   puts(Rails.application.config.hosts)
 
   # constraints host: "example.com" do
@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       #  ! コントローラ名はstaff/accounts(複数形)になる!!
       resource :account, except: [ :new, :create, :destroy]
       resource :password, only: [ :show, :edit, :update] # 20230809
+      resources :customers
     end
   end
 

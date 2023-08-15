@@ -21,7 +21,6 @@ class Staff::SessionsController < Staff::Base
     if @form.email.present?
       staff_member =
         StaffMember.find_by("LOWER(email) = ?", @form.email.downcase)
-        puts("staff_member::: #{staff_member[:email]}")
     end
     if Staff::Authenticator.new(staff_member).authenticate(@form.password)
       if staff_member.suspended?

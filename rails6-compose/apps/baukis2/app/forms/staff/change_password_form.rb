@@ -1,18 +1,52 @@
 class Staff::ChangePasswordForm
+  #- しかし、提供されたコードでは、Staff::ChangePasswordForm に ActiveModel::Model が含まれています。クラスにActiveModel::Modelモジュールをインクルードすると、そのクラスはRailsのモデルで使われるいくつかの機能を手に入れることができます。
+
+  # - .new(object: current_staff_member)を使ってStaff::ChangePasswordFormのオブジェクトをインスタンス化できるのはこのためです。Staff::ChangePasswordForm クラスがハッシュで初期化されると、ActiveModel::Model はハッシュのキーにちなんだインスタンス変数を対応する値に自動的に設定する機能を提供します。
   include ActiveModel::Model
 
-  # - 20230809 このファイルを通じて、passwords_controller.rb が objectにcurrent_staff_member を入れて @change_password_formを 生成している
-  # def edit
-  #   # ¥ object属性に職員本人のStaffMemberオブジェクトを指定してフォームオブジェクトを生成している 20230809
-  #   @change_password_form = Staff::ChangePasswordForm.new(object: current_staff_member)
-  # end
-
+  # - :object:    20230810
+  # - Creates a method object which returns the value of @object.
+  # - Creates a method object=(value) which sets the value of @object to value.
   attr_accessor :object, :current_password, :new_password,
     :new_password_confirmation
 
+  # ¥ attr_accessor :object is equivalent to defining the following two methods:
+  # def object
+  # @object
+  # end
+
+  # def object=(value)
+  # @object = value
+  # end
+
+  # ¥ confirmation: true - new_passwordの値がnew_password_confirmationの値と一致することを保証する。
+  # -new_password 属性に対して confirmation タイプのバリデーションを設定しています。この場合、この属性の名前に_confirmation を付加した名前を持つ属性とを比較して、値が一致しなければバリデーションが失敗する 20230810
+  validates :new_password, presence: true, confirmation: true
+
+  # ¥ ※validatesではない!  /  クラスメソッド validate は、 presence や form などの組み込みバリデーション以外の方式でバリデーションを実装するときに利用します。 Staff::Authenticatorを用いてユーザーが入力した「現在のパスワード」が正しいかどうかをチェックしています
+  validate do
+    unless Staff::Authenticator.new(object).authenticate(current_password)
+      errors.add(:current_password, :wrong)
+    end
+  end
+
+  # ¥ attr_accessor :object is equivalent to defining the following two methods:
+  # def object
+  # @object
+  # end
+
+  # def object=(value)
+  #   @object = value
+  # end
+  # ¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥¥
+
   def save
-    object.passowrd = new_password
-    object.save!
+    # object.password = new_password
+    # object.save!
+    if valid?
+      object.password = new_password
+      object.save!
+    end
   end
 end
 

@@ -20,16 +20,36 @@
       <th>アクション</th>
     </tr>
     <% @staff_members.each do |m| %>
+    <%# ¥ 20230810 プレゼンターを使用 %>
+    <%# ¥ new メソッドには2つの引数を指定します。第1引数は StaffMember オブジェクトです。第2引数には擬似変数 self を指定します。 ERBテンプレートの中で self によって参照されるオブジェクトを ビューコンテキスト と呼びます。このオブジェクトは Rails で定義されたすべてのヘルパーメソッドを自分のメソッドとして持っています。 %>
+      <% p = StaffMemberPresenter.new(m, self) %>
       <tr>
+      <%
+=begin
+%>
         <td><%= m.family_name %> <%= m.given_name %></td>
         <td><%= m.family_name_kana %> <%= m.given_name_kana %></td>
+<%
+=end
+%>
+        <td><%= p.full_name %></td>
+        <td><%= p.full_name_kana %></td>
         <td class="email"><%= m.email %></td>
         <td class="date"><%= m.start_date.strftime("%Y/%m/%d") %></td>
         <%# ¥ その前の行と同様に Date クラスのインスタンスメソッド strftime を用いて日付をフォーマットしているのですが、属性 end_date は nil の場合があるため、メソッド try を利用しています。このメソッドはレシーバが nil であれば nil を返し、 nil でなければ第1引数に指定した名前のメソッドを呼び出します。第2引数以下はメソッドに引数として渡されます %>
         <td class="date"><%= m.end_date.try(:strftime, "%Y/%m/%d") %></td>
+        <%
+=begin
+%>
         <td class="boolean">
           <%= m.suspended? ? raw("&#x2611;") : raw("&#x2610;") %></td>
         <td class="actions">
+<%
+=end
+%>
+
+        <td class="boolean"><%= p.suspended_mark %></td>
+
         <%# ! 20230725 よくわからない %>
 
         <%# 結果: <a href="/admin/staff_members/6/edit">編集</a> %>
@@ -38,6 +58,7 @@
         <%# ¥ _pathヘルパーを用いて書いた場合 20230802 %>
         <%# ^ <%= link_to "編集", edit_admin_staff_member_path(m) %>
         <%# ! staff_members/6/editのURLについては、/staff_membersはadmin名前空間のstaff_membersコントローラに由来し、6はStaffMemberオブジェクトのid、editはアクション名です。 %>
+        <td class="actions">
           <%= link_to "編集", [ :edit, :admin, m ] %> |
           <%# ¥ 20230806 ネストされたリソース %>
           <%= link_to "Events", [:admin, m, :staff_events] %> |

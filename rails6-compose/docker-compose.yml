@@ -4,6 +4,9 @@ services:
     image: postgres:11.2-alpine
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+    # portをローカルマシンに紐付ける 20230815
+    ports:
+      - "5432:5432"
   web:
     # エラーが出たため下記を追記した platform: xxx
     platform: linux/arm64

@@ -1,0 +1,76 @@
+<%# ¥ 変数 f は下記から来ている %>
+<%
+=begin
+%>
+  <%= form_with model: @staff_member, url: [ :admin, @staff_member ] do |f| %>
+    <%= render "form", f: f %>
+<%
+=end
+%>
+
+<%= FormPresenter.new(f, self).notes %>
+<fieldset id="customer-fields">
+  <legend>基本情報</legend>
+  <%= render "customer_fields", f: f %>
+</fieldset>
+<div class="check-boxes">
+  <%#  - form_with の中の do |f| の fを使って、タグを作成している presenter等は使用していない %>
+  <%= f.check_box :inputs_home_address %>
+  <%= f.label :inputs_home_address, "自宅住所を入力する" %>
+</div>
+<fieldset id="home-address-fields">
+  <legend>自宅住所</legend>
+  <%#  - formの中に form を入れる場合は、 render先にて f.fie.ds_for が必要!  %>
+  <%= render "home_address_fields", f: f %>
+</fieldset>
+<div class="check-boxes">
+  <%= f.check_box :inputs_work_address %>
+  <%= f.label :inputs_work_address, "勤務先を入力する" %>
+</div>
+<fieldset id="work-address-fields">
+  <legend>勤務先</legend>
+  <%= render "work_address_fields", f: f %>
+</fieldset>
+
+<%
+=begin
+%>
+
+20230813
+editアクションでは、既存の顧客を編集する準備をしています：
+
+def edit
+  customer_form = Staff::CustomerForm.new(Customer.find(params[:id]))
+終了
+
+Staff::CustomerFormオブジェクトを特定のCustomerインスタンス(params[:id]に一致するidを持つもの)でインスタンス化しています。このフォームオブジェクト(@customer_form)はCustomerインスタンスをラップし、バリデーションやプレゼンテーションロジックのような他の責務も管理します。
+
+そして、ビューで
+
+<%= form_with model： form_with model: @customer_form, scope： "form"、
+      url： [ :staff, @customer_form.customer ] do |f| %> を実行します。
+
+customer_form用のフォームを作成しています。form_with メソッドのブロック変数 f はメインモデル、この場合は @customer_form のフォームビルダーです。
+
+<%= render "form", f: f %>でパーシャルをレンダリングするとき、フォームビルダfをそのパーシャルに渡しています：
+
+<%= render "form", f: f %> とします。
+(以前に提供したコードから)パーシャルの内部にコピーします：
+<%= f.fields_for :customer, f.object.customer do |ff| %> です。
+
+f.fields_forを使用して、@customer_formの関連するcustomerオブジェクトのネストされたフォームを作成しています。ここでのf.objectはメインモデル(@customer_form)を指し、f.object.customerはそのフォームモデルに関連付けられた顧客にアクセスします。
+
+このfields_forブロックの中で、ffはこの関連する顧客オブジェクト専用のフォームビルダーになります。
+
+まとめると
+
+f はメインのフォームモデル @customer_form のフォームビルダです。
+
+ff は @customer_form に関連付けられた顧客用のネストされたフォームビルダーです。
+
+f は全体的なフォームを処理し、ff は顧客に関連するフィールドを処理します。これにより、@customer_form 全体のコンテキスト内で Customer オブジェクトの属性を管理することができます。
+
+<%
+=end
+%>
+

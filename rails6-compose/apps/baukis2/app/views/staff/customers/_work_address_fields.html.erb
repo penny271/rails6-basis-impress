@@ -1,0 +1,35 @@
+<%= f.fields_for :work_address, f.object.customer.work_address do |ff| %>
+  <%= markup do |m|
+    p = AddressFormPresenter.new(ff, self)
+    m << p.text_field_block(:company_name, "会社名", size: 40, required: true)
+    m << p.text_field_block(:division_name, "部署名", size: 40)
+    m << p.postal_code_block(:postal_code, "郵便番号", size: 7)
+    m << p.drop_down_list_block(:prefecture, "都道府県",
+      Address::PREFECTURE_NAMES)
+    m << p.text_field_block(:city, "市区町村", size: 16)
+    m << p.text_field_block(:address1, "町域、番地等", size: 40)
+    m << p.text_field_block(:address2, "建物名、部屋番号等", size: 40)
+    m.div(class: "input-block") do
+      m << p.decorated_label(:work_phones, "電話番号")
+      m.ol do
+        p.object.phones.each_with_index do |phone, index|
+          m << render("phone_fields", f: ff, phone: phone, index: index)
+        end
+      end
+    end
+  end %>
+<% end %>
+
+
+<%# ¥20230813 フォームビルダーのインスタンスメソッド fields_for を用いて、フォームの対象となるオブジェクトを切り替えています。このメソッドは2つの引数を取ります。第1引数が「レコード名」で、第2引数が対象となるオブジェクトです。 %>
+<%# - まとめると f はメインのフォームモデル @customer_form のフォームビルダです。ff は @customer_form に関連付けられた顧客用のネストされたフォームビルダーです。f は全体的なフォームを処理し、ff は顧客に関連するフィールドを処理します。これにより、@customer_form 全体のコンテキスト内で Customer オブジェクトの属性を管理することができます。 %>
+
+<%# ¥ Railsのフォームビルダのコンテキストでは、f.objectはフォームビルダ（f）がラップしている、または関連付けられているオブジェクトを指します。 %>
+<%# 分解してみましょう： %>
+<%# ^ f: これはフォームビルダのインスタンスです。form_with modelを実行すると customer_formとすると、Railsはフォームフィールドの生成に役立つフォームビルダのインスタンスを自動的に生成します。このフォームビルダのインスタンスは通常、ブロック内でfで参照されます。%>
+
+<%#-  f.objectです： フォームビルダ内で、objectはフォームビルダがラップしている元のオブジェクト（またはモデル）を返すメソッドです。具体的な例では、form_with model とします： とすると、f.object は @customer_form のインスタンスを返します。 %>
+
+<%#  - customer_form.rbよりこのように設定しているので f.object.customer.work_addressとなる!! build_work_address は、クラスメソッド has_one によって Customer モデルに追加されたインスタンスメソッドで、初期状態の HomeAddress オブジェクトをインスタンス化して自分自身と結び付けます。この段階では HomeAddress オブジェクトはデータベースに保存されません。このオブジェクトはフォームを表示するために利用されます
+    @customer.build_work_address unless @customer.work_address
+    @customer.build_work_address unless @customer.work_address %>

@@ -13,7 +13,19 @@
 =end
 %>
     <%= stylesheet_link_tag 'staff', media: 'all', 'data-turbolinks-track': 'reload' %>
+
+<%
+=begin
+%>
+
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+<%
+=end
+%>
+  <%# ^ 20230814 追加 %>
+  <%= javascript_pack_tag 'staff', 'data-turbolinks-track': 'reload' %>
+
   </head>
 
   <body>
