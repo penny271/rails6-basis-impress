@@ -1,6 +1,6 @@
 class Administrator < ApplicationRecord
   include EmailHolder # ^ 20230814 emailのバリデーション
-  include PasswordHolder # ^ 20230814 passwordのバリデーション
+  include PasswordHolder # ^ 1.ch17 パスワードが入力された際にhashed_password属性にその値をハッシュ化して設定する※保存はこのときにはできていない。object.save! する必要あり
 
   # ¥ 20230814 他のファイルで再利用できるように module化する
   # def password=(raw_password)

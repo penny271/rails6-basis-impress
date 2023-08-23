@@ -1,0 +1,135 @@
+<%# ! 下記のようにhtml: オプションを使わずに直接書くほうが主流 どちらでもok 2.ch3 20230819 %>
+<%
+=begin
+%>
+
+<%= form_with model: @search_form, scope: "search", url: :staff_customers, method: :get, class: "search" do |f| %>
+
+<%
+=end
+%>
+
+<%# ¥ 2.ch3 20230819 html オプションのサブオプション method にシンボル:get が指定されています。フォームデータを（デフォルトの POST メソッドではなく） GET メソッドで送信せよ、という意味です。 staff/customers#index アクションは GET メソッドによるアクセスを受け付けるのでこのようにしています。また、 html オプションのサブオプション class に"search" という文字列が指定されています。こちらは、生成される form 要素の class 属性に"search" を指定せよ、という意味になります。 %>
+
+<%# ^ m << p.drop_down_list_block(:birth_year, "誕生年:", (1900..Time.current.year).to_a.reverse)  1900..Time.current.year で、1900から今年の西暦年までの Range オブジェクトが作られます。これを to_a メソッドで配列に変換し、 reverse で要素の順序を逆にしています。   %>
+
+<%# - m.div do m << p.drop_down_list_block(:address_type, "住所の検索範囲:", [ [ "自宅住所のみ", "home" ], [ "勤務先のみ", "work" ] ]) end 「住所の検索範囲」を指定するためのドロップダウンリストを生成しています。選択肢のデータには二重に入れ子になった配列を指定しています。内側の配列1個が1つの選択肢に対応していて、1番目の要素が表示用の文字列、2番目の要素がデータ送信用の値となります。  %>
+
+<%# ¥ メモ: 位置引数とキーワード引数 %>
+
+<%#  form_with ヘルパーの scope オプションは、フォームの入力フィールド名と ID にプレフィックスをつけるために使われます。
+scope を使うと、生成されるフィールド名にはプレフィックスがつきます。たとえば 「search "とすると、field_nameという名前のフィールドはsearch[field_name]という名前になります。
+スコープを使わない場合、フィールド名はモデル名に基づきます。この場合、例: name="staff_customer_search_form[given_name_kana]" となる %>
+<%= form_with model: @search_form, scope: "search", url: :staff_customers,
+  html: { method: :get, class: "search" } do |f| %>
+  <%= markup do |m|
+    p = FormPresenter.new(f, self)
+    m << p.text_field_block(:family_name_kana, "フリガナ（姓）:")
+    m << p.text_field_block(:given_name_kana, "フリガナ（名）:")
+    m.br
+    m << p.drop_down_list_block(:birth_year, "誕⽣年:",
+      [["", ""]] + (1900..Time.current.year).to_a.reverse.map(&:to_s))
+    m << p.drop_down_list_block(:birth_month, "誕⽣⽉:", [["", ""]] + (1..12).to_a.map(&:to_s))
+    m << p.drop_down_list_block(:birth_mday, "誕⽣⽇:", [["", ""]] + (1..31).to_a.map(&:to_s))
+    m << p.drop_down_list_block(:gender, "性別:",
+      [["", ""], [ "男性", "male" ], [ "⼥性", "female" ] ])
+    m.br
+    m.div do
+      m << p.drop_down_list_block(:address_type, "住所の検索範囲:",
+        [ ["", ""], [ "⾃宅住所のみ", "home" ], [ "勤務先のみ", "work" ] ])
+    end
+    m << p.drop_down_list_block(:prefecture, "都道府県:",
+      Address::PREFECTURE_NAMES)
+    m << p.text_field_block(:city, "市区町村:")
+    m.br
+    m << p.text_field_block(:postal_code, "郵便番号:", size: 7)
+    m << p.text_field_block(:phone_number, "電話番号:")
+    m << p.text_field_block(:last_four_digits_of_phone_number,
+      "電話番号下4桁:", size: 4)
+    m << f.submit("検索")
+  end %>
+<% end %>
+
+
+<%# ¥ 2.ch3 20230819 上記の html_builder.rb を使わない version. %>
+<%
+=begin
+%>
+
+<%= form_with model: @search_form, scope: "search", url: :staff_customers, method: :get, class: "search" do |f| %>
+
+  <div>
+    <%= f.label :family_name_kana, "フリガナ（姓）:" %>
+    <%= f.text_field :family_name_kana %>
+  </div>
+
+  <div>
+    <%= f.label :given_name_kana, "フリガナ（名）:" %>
+    <%= f.text_field :given_name_kana %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= f.label :birth_year, "誕⽣年:" %>
+    <%= f.select :birth_year, (1900..Time.current.year).to_a.reverse %>
+  </div>
+
+  <div>
+    <%= f.label :birth_month, "誕⽣⽉:" %>
+    <%= f.select :birth_month, (1..12) %>
+  </div>
+
+  <div>
+    <%= f.label :birth_mday, "誕⽣⽇:" %>
+    <%= f.select :birth_mday, (1..31) %>
+  </div>
+
+  <div>
+    <%= f.label :gender, "性別:" %>
+    <%= f.select :gender, [["男性", "male"], ["⼥性", "female"]] %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= f.label :address_type, "住所の検索範囲:" %>
+    <%= f.select :address_type, [["⾃宅住所のみ", "home"], ["勤務先のみ", "work"]] %>
+  </div>
+
+  <div>
+    <%= f.label :prefecture, "都道府県:" %>
+    <%= f.select :prefecture, Address::PREFECTURE_NAMES %>
+  </div>
+
+  <div>
+    <%= f.label :city, "市区町村:" %>
+    <%= f.text_field :city %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= f.label :postal_code, "郵便番号:" %>
+    <%= f.text_field :postal_code, size: 7 %>
+  </div>
+
+  <div>
+    <%= f.label :phone_number, "電話番号:" %>
+    <%= f.text_field :phone_number %>
+  </div>
+
+  <div>
+    <%= f.label :last_four_digits_of_phone_number, "電話番号下4桁:" %>
+    <%= f.text_field :last_four_digits_of_phone_number, size: 4 %>
+  </div>
+
+  <%= f.submit "検索" %>
+
+<% end %>
+
+
+
+<%
+=end
+%>

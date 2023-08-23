@@ -1,0 +1,24 @@
+<% @title = "ログイン" %>
+
+<div id="login-form">
+  <h1><%= @title %></h1>
+
+<%# ¥ url: :customer_session とあることから admin/session_controller に postされ、その中にある createメソッドが自動で走る 20230802 %>
+  <%= form_with model: @form, url: :customer_session do |f| %>
+    <div>
+      <%= f.label :email, "メールアドレス" %>
+      <%= f.text_field :email %>
+      <%# ! 20230805 Ruby on Railsフレームワークでは、form_withヘルパーメソッドを使うと、Railsは渡したモデルオブジェクトに基づいてフォームフィールドのname属性を自動的に作成します。
+      @form = Admin::LoginForm.new なので name="admin_login_form[xxx]" となる
+      %>
+      <%# <input type="text" name="admin_login_form[email]" id="admin_login_form_email">   %>
+    </div>
+    <div>
+      <%= f.label :password, "パスワード" %>
+      <%= f.password_field :password %>
+    </div>
+    <div>
+      <%= f.submit "ログイン" %>
+    </div>
+  <% end %>
+</div>

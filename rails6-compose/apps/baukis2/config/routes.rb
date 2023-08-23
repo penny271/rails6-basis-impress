@@ -69,9 +69,12 @@ Rails.application.routes.draw do
     end # end of namespace
   end
 
+  # baukis2/config/initializers/baukis2.rb  ->  customer: { host: "example.com", path: "mypage" }
   constraints host: config[:customer][:host] do
     namespace  :customer, path: config[:customer][:path] do
       root "top#index"
+      get "login" => "sessions#new", as: :login
+      resource :session, only: [:create, :destroy]
     end
   end
 

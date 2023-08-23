@@ -1,4 +1,7 @@
-class Customer::TopController < ApplicationController
+# class Customer::TopController < ApplicationController
+class Customer::TopController < Customer::Base
+  skip_before_action :authorize
+
   def index
     # raise Forbidden
     # raise ActiveRecord::RecordNotFound

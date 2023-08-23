@@ -1,3 +1,4 @@
+#- 1.ch14
 # class Staff::PasswordController < ApplicationController
 class Staff::PasswordsController < Staff::Base
   def show

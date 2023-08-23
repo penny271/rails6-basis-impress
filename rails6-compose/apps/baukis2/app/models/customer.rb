@@ -1,14 +1,18 @@
 class Customer < ApplicationRecord
-  include EmailHolder # ^ emailのバリデーション
-  include PersonalNameHolder
+  include EmailHolder # ^ emailの値の正規化とバリデーション
+  include PersonalNameHolder #^ 名前関連の値の正規化とバリデーション
 
   #  - 1対1の関連付け
   # has_one :home_address, dependent: :destroy
   # has_one :work_address, dependent: :destroy
   # - 20230814 autosave オプションに true を指定すると、常に Customer オブジェクトがデータベースに保存される際に、関連付けられたオブジェクトも自動的にデータベースに保存されるようになります。 autosaveオプションにfalseを指定すると、データベース未保存のCustomerオブジェクトがデータベースに保存された場合でも、関連付けられたオブジェクトは自動的にデータベースに保存されなくなります。autosaveオプションの指定を省略した場合とは振る舞いが異なるので、注意してください。
   # ! autosave: true にしないと Customerオブジェクトが更新された際に関連付けられたオブジェクトは保存されない
-  has_one :home_address, dependent: :destroy, autosave: true
-  has_one :work_address, dependent: :destroy, autosave: true
+  # ¥ - 2.ch3 20230819 customer_search_form.rb のフィルタリングで使用するため追記 ※検索でしか使わないためオプション不要
+  has_many :addresses, dependent: :destroy # ^ :destory をつけて下記を簡略化
+  # has_one :home_address, dependent: :destroy, autosave: true
+  # has_one :work_address, dependent: :destroy, autosave: true
+  has_one :home_address, autosave: true
+  has_one :work_address, autosave: true
   has_many :phones, dependent: :destroy
   # ¥ 20230814
   # - 記号->で Proc オブジェクトを作り、クラスメソッド has_many の第2引数に指定しています。この Proc オブジェクトは、関連付けの スコープ を示します。 Rails用語のスコープ（scope）は、モデルクラスの文脈では「検索の付帯条件」を意味します。9～10行の has_many メソッドは personal_phones という名前の関連付けを設定しています。基本的には、8行目で行われている関連付け phones と同様に Phone モデルと関連付けられています。ただし、個人電話番号だけを絞り込むために where(address_id: nil) という付帯条件を指定しています。 8～10 行の記述によりCustomerクラスには、phonesとpersonal_phonesという2 つのインスタンスメソッドが定義されます。前者は、顧客が持っているすべての電話番号（自宅電話番号、勤務先電話番号を含む）のリストを返します。後者は、顧客の個人電話番号（address_idカラムがNULLのレコード）だけを返します。 スコープには order(:id) のようなソート順も指定できます。フォームの中に電話番号が一定の順序で並ぶようにするためにこの指定を加えています。 なお、関連付け phones に autosave オプションが付いていないのは、自宅電話番号や勤務先電話番号の自動保存は Address モデル側で行われるからです。
@@ -23,6 +27,15 @@ class Customer < ApplicationRecord
     before: ->(obj) { Date.today },
     allow_blank: true
   }
+
+  # - 2.ch3 20230819 customrオブジェクトの保存時にそれらのカラムへ自動的に値がセットされるようにする
+  before_save do
+    if birthday
+      self.birthday_year = birthday.year
+      self.birthday_month = birthday.month
+      self.birthday_mday = birthday.mday
+    end
+  end
 
   def password=(raw_password)
     if raw_password.kind_of?(String)

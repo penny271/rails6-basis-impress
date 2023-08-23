@@ -1,6 +1,5 @@
 class Staff::ChangePasswordForm
   #- しかし、提供されたコードでは、Staff::ChangePasswordForm に ActiveModel::Model が含まれています。クラスにActiveModel::Modelモジュールをインクルードすると、そのクラスはRailsのモデルで使われるいくつかの機能を手に入れることができます。
-
   # - .new(object: current_staff_member)を使ってStaff::ChangePasswordFormのオブジェクトをインスタンス化できるのはこのためです。Staff::ChangePasswordForm クラスがハッシュで初期化されると、ActiveModel::Model はハッシュのキーにちなんだインスタンス変数を対応する値に自動的に設定する機能を提供します。
   include ActiveModel::Model
 

@@ -6,7 +6,7 @@ class StaffMember < ApplicationRecord
   # - 20230814 本ファイルの別のファイルで再利用できる部分抜き出している include PersonalNameHolderが before_validationや validatesを行う
   include EmailHolder # ^ emailのバリデーション
   include PersonalNameHolder  # ^ 名前関連のバリデーション
-  include PasswordHolder # ^ passwordのバリデーション
+  include PasswordHolder # ^ 1.ch17 パスワードが入力された際にhashed_password属性にその値をハッシュ化して設定する※保存はこのときにはできていない。object.save! する必要あり
 
   # ¥ 20230806 一対多の関連付け
   # ¥ クラスメソッド has_many は一対多の関連付けを設定します。引数に指定されたシンボルが関連付けの名前となります。このシンボルと同名のインスタンスメソッドが定義されるので、関連付けの名前は既存の属性やインスタンスメソッドの名前と被らないように選択する必要があります。 class_name オプションには、関連付けの対象モデルのクラス名を指定します。関連付けの名前からクラス名が推定できる場合は class_name オプションは省略可能です。
