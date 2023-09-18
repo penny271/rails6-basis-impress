@@ -13,7 +13,8 @@ class Staff::CustomersController < Staff::Base
     #! NG params.require(:search).permit(:)
     # - しかし、上記のように書くと、ダッシュボードから顧客管理ページに遷移したときに、例外 ActionController::ParameterMissing が発生します。パラメータに"search" が含まれないからです。そこで、 params のキーに"search" が含まれるかどうかのチェックをスキップしています。 ダッシュボードから顧客管理ページに遷移した場合は、 params[:search] は nil を返します。その nil に対して&. 演算子を適用すると nil が返ります。検索フォームから index アクションが呼ばれた場合は、 params[:search] は ActionController::Parameters オブジェクトを返します。このオブジェクトに対して &. 演算子を適用すると、 permit メソッドが呼び出されます。
     #¥ _search_form.html.erbにて scope: "search" としていることから paramsの引数は :searchとなっている
-    params[:search]&.permit([:family_name_kana, :given_name_kana, :birth_year, :birth_month, :birth_mday, :address_type, :prefecture, :city, :phone_number, :gender, :postal_code, :last_four_digits_of_phone_number])
+    params[:search]&.permit([:family_name_kana, :given_name_kana, :birth_year, :birth_month, :birth_mday, :address_type, :prefecture, :city, :phone_number, :gender, :postal_code, :last_four_digits_of_phone_number
+    ])
   end
 
   def show

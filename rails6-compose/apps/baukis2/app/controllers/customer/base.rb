@@ -2,12 +2,13 @@ class Customer::Base < ApplicationController
   before_action :authorize
 
   private def current_customer
-    if session[:customer_id]
-      @current_customer ||= Customer.find_by(id: session[:customer_id])
-    end
-    # if customer_id = cookies.signed[:customer_id] || session[:customer_id]
-    #   @current_customer ||= Customer.find_by(id: customer_id)
+    # if session[:customer_id]
+    #   @current_customer ||= Customer.find_by(id: session[:customer_id])
     # end
+    # ¥ 2.ch4.2.2 ログイン状態を記録する処理 cookies.signed[:customer_id]
+    if customer_id = cookies.signed[:customer_id] || session[:customer_id]
+      @current_customer ||= Customer.find_by(id: customer_id)
+    end
   end
 
   helper_method :current_customer

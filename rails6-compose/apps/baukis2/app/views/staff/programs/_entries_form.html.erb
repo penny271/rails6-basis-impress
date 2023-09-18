@@ -1,0 +1,58 @@
+<%# ¥ 2.ch.7.3.1 %>
+<%# ! この部分テンプレートで作るチェックボックスは form タグで囲まれていません。つまり、チェックボックスに設定された値がそのままフォームデータとして送信されません。事実、各チェックボックスには name 属性も value 属性もありません。すぐあとで見るように、私たちはJavaScriptプログラムでこれらのチェックボックスの状態を調べ、データを加工してフォームの隠しフィールドにセットし、加工されたデータをフォームからアクションに向けて送信します %>
+<%
+entries = @program.entries.includes(:customer).order("entries.id").to_a
+cols = 4
+rows = entries.size / cols
+rows += 1 unless entries.size % cols == 0
+%>
+<table class="entries">
+  <tr>
+    <% cols.times do %>
+    <th></th>
+    <th>⽒名</th>
+    <th>A</th>
+    <th>C</th>
+    <% end %>
+  </tr>
+  <% rows.times do |i| %>
+  <tr>
+    <% cols.times do |j| %>
+      <%# * 変数 i には現在の行番号、変数 j には現在の列番号がセットされています。いずれも0が最初の番号です。 i に列数をかけて j を加えると配列のインデックスになります。それを変数 index にセットすれば、 entries[index] で現在の Entry オブジェクトを取得できます。ただし、配列の数が4で割り切れない場合は、 entries[index] が nil を返す場合があります。そのときは、 break でループを抜けます。 %>
+      <% index = i * cols + j %>
+      <% e = entries[index] || break %>
+      <%= markup(:div, class: "entry") do |m|
+        m.th index + 1
+        m.td e.customer.family_name + " " + e.customer.given_name
+        m.td do
+          attributes = { type: "checkbox", class: "approved"}
+          # * input 要素に class 属性と date-entry-id 属性を追加しています。いずれも、後述するJavaScriptプログラムが使用します。 data-entry-id 属性には Entry オブジェクトの主キー（id）の値がセットされることを覚えておいてください。
+          attributes["data-entry-id"] = e.id
+          attributes[:checked] = "checked" if e.approved?
+          m.input attributes
+        end
+        m.td do
+          attributes = { type: "checkbox", class: "canceled"}
+          attributes["data-entry-id"] = e.id
+          attributes[:checked] = "checked" if e.canceled?
+          m.input attributes
+        end
+      end %>
+    <% end %>
+  </tr>
+  <% end %>
+</table>
+
+<%# ¥ ¥ 2.ch.7.3.2 %>
+<div class="button-wrapper">
+  <%= form_with model: Staff::EntriesForm.new(@program), scope: "form",
+    url: [ :update_all, :staff, @program, :entries ],
+    html: { method: :patch } do |f| %>
+    <%= f.hidden_field :approved %>
+    <%= f.hidden_field :not_approved %>
+    <%= f.hidden_field :canceled %>
+    <%= f.hidden_field :not_canceled %>
+    <%= button_tag "申し込みのフラグを更新する", type: "button",
+      id: "update-entries-button" %>
+  <% end %>
+</div>

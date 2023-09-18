@@ -73,10 +73,18 @@ class Admin::StaffMembersController < Admin::Base
   def destroy
     staff_member = StaffMember.find(params[:id])
     #! .destroy ではなく、 .destroy! とすることで動作が失敗したときにエラーを発生させる
-    staff_member.destroy!
-    # ¥ コメントアウトおようにも記述可能!
-    # flash[:notice] = 'StaffMember was successfully deleted.'
-    flash.notice = '職員アカウントを削除しました。'
+    # staff_member.destroy!
+    # # ¥ コメントアウトおようにも記述可能!
+    # # flash[:notice] = 'StaffMember was successfully deleted.'
+    # flash.notice = '職員アカウントを削除しました。'
+    # ¥ 2.ch6.1.3
+    if staff_member.deletable?
+      staff_member.destroy!
+      flash.notice = '職員アカウントを削除しました。'
+    else
+      flash.alert = "この職員アカウントは削除できません。"
+    end
+
     # redirect_to admin_staff_members_url
     redirect_to :admin_staff_members
   end

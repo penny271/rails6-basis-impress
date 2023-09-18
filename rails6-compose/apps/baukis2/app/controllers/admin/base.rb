@@ -1,4 +1,6 @@
 class Admin::Base < ApplicationController
+  # ¥ 2.ch5.問題 ipアドレスによるアクセス制限
+  before_action :check_source_ip_address
   # ¥ 20230806 before_actionの継承
   before_action :authorize
   before_action :check_account
@@ -12,6 +14,11 @@ class Admin::Base < ApplicationController
   end
 
   helper_method :current_administrator
+
+  private def check_source_ip_address
+    #  - クラスメソッド呼出 AllowedSource.include?("admin", request.ip)
+    raise IpAddressRejected unless AllowedSource.include?("admin", request.ip)
+  end
 
   private def authorize
     unless current_administrator

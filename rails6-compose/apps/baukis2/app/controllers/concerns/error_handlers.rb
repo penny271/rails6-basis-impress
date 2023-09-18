@@ -7,7 +7,7 @@ module ErrorHandlers
     #! エラーが発生すると、Railsはまずそのエラーが最後に記載されている順、この場合だと、IpAddressRejected、次にForbidden、最後にStandardErrorのインスタンスかどうかをチェックします。この動作は、特に同じクラス階層に属する例外を処理するときに重要です。例えば、StandardErrorはRubyの他の多くのエラークラスのスーパークラスである。そのため、もしrescue_from StandardError節がコードの最後に書かれていたら、すべての標準エラーを捕捉してしまい、後の節に到達することはありません。したがって、一般的には、より一般的なエラーの前に、より具体的なエラーを列挙すべきです。
     rescue_from StandardError, with: :rescue500
     rescue_from ApplicationController::Forbidden, with: :rescue403
-    rescue_from ApplicationController::IpAddressRejected, with: :rescue403
+    # rescue_from ApplicationController::IpAddressRejected, with: :rescue403
     rescue_from ActiveRecord::RecordNotFound, with: :rescue404
     rescue_from ActionController::ParameterMissing, with: :rescue400
   end
@@ -16,10 +16,10 @@ module ErrorHandlers
     render "errors/bad_request", status: 400
   end
 
-  private def rescue403(e)
-    @exception = e
-    render "errors/forbidden", status: 403
-  end
+  # private def rescue403(e)
+  #   @exception = e
+  #   render "errors/forbidden", status: 403
+  # end
 
   private def rescue404(e)
     render "errors/not_found", status: 404

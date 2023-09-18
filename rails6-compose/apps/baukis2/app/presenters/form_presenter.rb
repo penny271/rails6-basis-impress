@@ -23,7 +23,24 @@ class FormPresenter
       # m << label(name, label_text, class: options[:required] ? "required" : nil)
       m << decorated_label(name, label_text, options)
       m << text_field(name, options)
+      # ¥ 2.ch7.1.5 text_field_block メソッドに maxlength オプションを指定すると、その値は input 要素の maxlength 属性として使われると同時に、入力欄の右に文字数制限に関する情報が表示されるようになります。(上記のtext_filed()のoptionsに当てはまるため)
+      if options[:maxlength]
+        m.span "（#{options[:maxlength]}⽂字以内）", class: "instruction"
+      end
       # - 20230811 エラーメッセージの生成
+      m << error_messages_for(name)
+    end
+  end
+
+  # ¥ 2.ch7.1.5 max属性を追加
+  def number_field_block(name, label_text, options = {})
+    markup(:div) do |m|
+      m << decorated_label(name, label_text, options)
+      m << form_builder.number_field(name, options)
+      if options[:max]
+        max = view_context.number_with_delimiter(options[:max].to_i)
+        m.span "（最⼤値: #{max}）", class: "instruction"
+      end
       m << error_messages_for(name)
     end
   end
@@ -76,6 +93,7 @@ class FormPresenter
   def error_messages_for(name)
     markup do |m|
       # ¥ form_builder.object を delegate で objectで呼び出せるようにしている 20230813
+      # - errors.full_messages_for(:symbol)メソッドは指定した属性のエラーメッセージを配列で取得するコマンドです。
       object.errors.full_messages_for(name).each do |message|
         m.div(class: "error-message") do |m|
           m.text message
@@ -85,12 +103,13 @@ class FormPresenter
   end
 
   # # ¥ 条件により入力必須マークがついたラベルタグを作成する
-  # private def decorated_label(name, label_text, options = {})
-  #   label(name, label_text, class: options[:required] ? "required" : nil)
-  # end
+  private def decorated_label(name, label_text, options = {})
+    label(name, label_text, class: options[:required] ? "required" : nil)
+  end
 
   # ¥ 条件により入力必須マークがついたラベルタグを作成する
   def decorated_label(name, label_text, options = {})
+    puts("label_name::: #{name}") # label_name::: application_start_date
     label(name, label_text, class: options[:required] ? "required" : nil)
   end
 

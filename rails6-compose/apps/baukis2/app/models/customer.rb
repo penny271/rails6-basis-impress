@@ -14,6 +14,14 @@ class Customer < ApplicationRecord
   has_one :home_address, autosave: true
   has_one :work_address, autosave: true
   has_many :phones, dependent: :destroy
+
+  # ¥ 2.ch6.1.3
+  has_many :entries, dependent: :destroy
+  # - 多対多の関連付け
+  # * has_many メソッドの引数の単数形が source オプションの値と等しい場合、 source オプションは省略できます
+  has_many :programs, through: :entries
+
+
   # ¥ 20230814
   # - 記号->で Proc オブジェクトを作り、クラスメソッド has_many の第2引数に指定しています。この Proc オブジェクトは、関連付けの スコープ を示します。 Rails用語のスコープ（scope）は、モデルクラスの文脈では「検索の付帯条件」を意味します。9～10行の has_many メソッドは personal_phones という名前の関連付けを設定しています。基本的には、8行目で行われている関連付け phones と同様に Phone モデルと関連付けられています。ただし、個人電話番号だけを絞り込むために where(address_id: nil) という付帯条件を指定しています。 8～10 行の記述によりCustomerクラスには、phonesとpersonal_phonesという2 つのインスタンスメソッドが定義されます。前者は、顧客が持っているすべての電話番号（自宅電話番号、勤務先電話番号を含む）のリストを返します。後者は、顧客の個人電話番号（address_idカラムがNULLのレコード）だけを返します。 スコープには order(:id) のようなソート順も指定できます。フォームの中に電話番号が一定の順序で並ぶようにするためにこの指定を加えています。 なお、関連付け phones に autosave オプションが付いていないのは、自宅電話番号や勤務先電話番号の自動保存は Address モデル側で行われるからです。
   # ^ class_name: "Phone"：
@@ -31,9 +39,9 @@ class Customer < ApplicationRecord
   # - 2.ch3 20230819 customrオブジェクトの保存時にそれらのカラムへ自動的に値がセットされるようにする
   before_save do
     if birthday
-      self.birthday_year = birthday.year
-      self.birthday_month = birthday.month
-      self.birthday_mday = birthday.mday
+      self.birth_year = birthday.year
+      self.birth_month = birthday.month
+      self.birth_mday = birthday.mday
     end
   end
 
@@ -85,3 +93,34 @@ end
 
 # 代わりにpasswordのセッターメソッドを使用します：
 # ルビー
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# class Customer < ApplicationRecord
+#   include EmailHolder
+#   include PersonalNameHolder
+#   include PasswordHolder
+
+#   has_many :addresses, dependent: :destroy
+#   has_one :home_address, autosave: true
+#   has_one :work_address, autosave: true
+#   has_many :phones, dependent: :destroy
+#   has_many :personal_phones, -> { where(address_id: nil).order(:id) },
+#     class_name: "Phone", autosave: true
+#   has_many :entries, dependent: :destroy
+#   has_many :programs, through: :entries
+
+#   validates :gender, inclusion: { in: %w(male female), allow_blank: true }
+#   validates :birthday, date: {
+#     after: Date.new(1900, 1, 1),
+#     before: ->(obj) { Date.today },
+#     allow_blank: true
+#   }
+
+#   before_save do
+#     if birthday
+#       self.birth_year = birthday.year
+#       self.birth_month = birthday.month
+#       self.birth_mday = birthday.mday
+#     end
+#   end
+# end

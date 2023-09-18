@@ -1,0 +1,15 @@
+<% @title = "アカウントの更新（確認）" %>
+<h1><%= @title %></h1>
+
+<div id="generic-form" class="confirming">
+  <%= form_with model: @customer_form, scope: "form", url: :customer_account do |f| %>
+    <p>以下の内容でアカウントを更新します。よろしいですか？ </p>
+    <%= render "confirming_form", f: f %>
+    <div class="buttons">
+      <%= f.submit "更新" %>
+      <%# - ¥ 2.ch.9.3.8 訂正ボタン %>
+      <%# * フォームビルダーの submit メソッドには name オプションを与えることができます。これは input 要素の name 属性の値として用いられます。 name オプションのデフォルト値が "commit" です。フォームが送信されると、クリックされたボタンの name 属性をキーとするパラメータも同時に送信されます。つまり、「更新」ボタンがクリックされると "commit" というキーのパラメータが、「訂正」ボタンがクリックされると、"correct" というキーのパラメータが update アクションに渡ります。 したがって、 params[:commit] に値がセットされているかどうかで、どちらのボタンが押されたのかが判定できるというわけです %>
+      <%= f.submit "訂正", name: "correct" %>
+    </div>
+  <% end %>
+</div>

@@ -2,7 +2,11 @@ Rails.application.configure do
   config.baukis2 = {
     staff: { host: "baukis2.example.com", path: "" },
     admin: { host: "baukis2.example.com", path: "admin" },
-    customer: { host: "example.com", path: "mypage" }
+    customer: { host: "example.com", path: "mypage" },
+    # restrict_ip_addresses: ENV["RESTRICT_IP_ADDRESS"] == "1"
+    # ¥ 2.ch5.1.2 ipアドレスによるアクセス制限 下記がtrueのとき制限を行うこととする
+    # restrict_ip_addresses: true
+    restrict_ip_addresses: false
   }
 end
 

@@ -30,9 +30,21 @@ Rails.application.routes.draw do
 
       # ¥ 単数リソース 自分自身の情報を変更したり参照したりする 20230724
       #  ! コントローラ名はstaff/accounts(複数形)になる!!
-      resource :account, except: [ :new, :create, :destroy]
+      # resource :account, except: [ :new, :create, :destroy]
+      # ¥ 2.ch.9 章末問題
+      resource :account, except: [ :new, :create, :destroy ] do
+        patch :confirm
+      end
       resource :password, only: [ :show, :edit, :update] # 20230809
       resources :customers
+      # resources :programs
+      # ¥ 2.ch.7.3.2
+      # - programs リソースを定義する resources メソッドにブロックを加え、ブロックの中でリソース entries を定義しています。本編Chapter 13で解説した「ネストされたリソース」です。ただし、リソース entries を定義する resources メソッドの only オプションに空の配列が渡されているため、基本の7アクションは設定されません。その代わりに、PATCHでアクセスするための update_all アクションが設定されています。 この update_all アクションは、単独の Entry オブジェクトを書き換えるものではなく、複数個の Entry オブジェクトを一括更新します。そのため、 on オプションに :collection が指定されています。つまり、 update_all アクションには対象オブジェクトを特定するためのパラメータ "id" が渡りません。
+      resources :programs do
+        resources :entries, only: [] do
+          patch :update_all, on: :collection
+        end
+      end
     end
   end
 
@@ -65,6 +77,12 @@ Rails.application.routes.draw do
         resources :staff_events, only: [:index]
       end
       resources :staff_events, only: [:index]
+      # ¥ 2.ch5.2.2 許可IPアドレスの管理
+      # - on: :collection： このルートがコレクションルートであることを指定します。コレクションルートはリソースのコレクション（この場合は allowed_sources）に作用します。単一のリソースに作用しないため、ルートはIDを必要としません。生成されるURLは/allowed_sources/deleteになります。
+      resources :allowed_sources, only: [:index, :create] do
+        delete :delete, on: :collection
+      end
+
       # -ルーティング結果: GET /admin/staff_events  | ルーティング名: :admin_staff_events
     end # end of namespace
   end
@@ -75,6 +93,26 @@ Rails.application.routes.draw do
       root "top#index"
       get "login" => "sessions#new", as: :login
       resource :session, only: [:create, :destroy]
+      # ¥ 2.ch.9.1.1 顧客自身によるアカウント管理機能
+      # resource :account, except: [ :new, :create, :destroy]
+      # ¥ 2.ch.9.2.1 顧客自身によるアカウント管理機能
+      resource :account, except: [ :new, :create, :destroy] do
+        # * confirm アクションを追加(PATCHメソッドでアクセス)
+        patch :confirm
+      end
+
+      # ¥ 2.ch.8.1.1 プログラム一覧表示・詳細表示機能(顧客向け)
+      # resources :programs, only: [ :index, :show]
+      # ¥ 2.ch.8.2.2 プログラム一覧表示・詳細表示機能(顧客向け)
+      resources :programs, only: [ :index, :show] do
+        # - リソース programs にネストされた単数リソース entry を定義しています。顧客とプログラムが特定された文脈において、それらと関連付けられた Entry オブジェクトは0個または1個しか存在しないので、 id パラメータなしで取得できます。そのため単数リソースとして定義します。
+        resource :entry, only: [ :create ] do
+          patch :cancel
+          # - 上記の httpメソッドとurlパスのパターン
+          # create - POST /customer/programs/:program_id/entry
+          # cancel - PATCH /customer/programs/:program_id/entry/cancel
+        end
+      end
     end
   end
 

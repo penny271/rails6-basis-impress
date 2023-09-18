@@ -5,7 +5,13 @@ class Customer::TopController < Customer::Base
   def index
     # raise Forbidden
     # raise ActiveRecord::RecordNotFound
-    render action: "index"
+    # render action: "index"
+    # ¥ 2.ch.8.1.2 プログラム一覧表示・詳細表示機能(顧客向け)
+    if current_customer
+      render action: "dashboard"
+    else
+      render action: "index"
+    end
   end
 end
 

@@ -4,6 +4,9 @@ services:
     image: postgres:11.2-alpine
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+    # portをローカルマシンに紐付ける 20230815
+    ports:
+      - "5432:5432"
   web:
     platform: linux/arm64
     image: rails6-compose-web

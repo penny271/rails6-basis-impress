@@ -13,6 +13,11 @@ class StaffMember < ApplicationRecord
   # ^ dependent オプションには、 StaffMember オブジェクトを削除する際の処理方法を指定します。シンボル:destroy を指定すれば、関連付けられたすべての StaffEvent オブジェクトが StaffMember オブジェクトが削除される前に削除される
   has_many :events, class_name: "StaffEvent", dependent: :destroy
 
+  # ¥ 2.ch6.1.3
+  # - テーブル programs からテーブル staff_members テーブルを参照しているカラム（外部キー）の名前 "registrant_id" を foreign_key オプションに指定しています。参照先テーブルの名前から外部キーの名前が推定できる場合（外部キーの名前が staff_member_id であった場合）は、 foreign_key オプションは省略可能
+  # * dependent オプションにシンボル :restrict_with_exception を指定しているのは、安全のための措置です。いま、ある職員と関連付けられたプログラムが１個以上存在しているとします。その場合、職員だけを削除しようとするとデータベース側でエラーが発生します。外部キー制約違反となるからです。そこで、その職員の削除を試みると例外が発生するように設定しています
+  has_many :programs, foreign_key: "registrant_id", dependent: :restrict_with_exception
+
   #  - モデルオブジェクトに対してバリデーション、保存、削除などの操作が行われる前後に実行される処理を コールバック（callbacks）または フック（hooks）と呼びます。ここで使用されている ActiveRecord::Base のクラスメソッド before_validation は、指定されたブロックをバリデーションの直前に実行されるコールバックとして登録します。すなわち、 StaffMember オブジェクトに対してバリデーションが行われる直前に、下記のコードが実行されます。
   # before_validation do
     # self.email = normalize_as_email(email)
@@ -72,6 +77,11 @@ class StaffMember < ApplicationRecord
     !suspended? && start_date <= Date.today && (end_date.nil? || end_date > Date.today)
   end
 end
+
+  # ¥ 2.ch6.1.3 職員が持っているプログラムの個数が0の場合にtrueを返す
+  def deletable?
+    programs.empty?
+  end
 
 
 #¥ def password=(raw_password) の意味 20230723:

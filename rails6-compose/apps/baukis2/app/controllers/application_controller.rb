@@ -10,6 +10,9 @@ class ApplicationController < ActionController::Base
   #^ rails6-compose/apps/baukis2/app/controllers/concerns/error_handlers.rb の中に module ErrorHandler がある 20230805
   # include ErrorHandlers
   include ErrorHandlers if Rails.env.production?
+  # ¥ 2.ch5.1.2 ipアドレスによるアクセス制限
+  rescue_from ApplicationController::Forbidden, with: :rescue403
+  rescue_from ApplicationController::IpAddressRejected, with: :rescue403
 
   private def set_layout
     if params[:controller].match(%r{\A(staff|admin|customer)/})
@@ -20,6 +23,11 @@ class ApplicationController < ActionController::Base
     puts("params[:controller]:::#{params[:controller]}")
     return selected_layout
   end # private def set_layout
+
+  private def rescue403(e)
+    @exception = e
+    render "errors/forbidden", status: 403
+  end
 
 end # end of class ApplicationController < ActionController::Base
 

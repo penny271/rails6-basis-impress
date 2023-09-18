@@ -8,6 +8,18 @@ class Staff::AccountsController < Staff::Base
     @staff_member = current_staff_member
   end
 
+  # ¥ 2.ch.9 章末問題
+  # PATCH
+  def confirm
+    @staff_member = current_staff_member
+    @staff_member.assign_attributes(staff_member_params)
+    if @staff_member.valid?
+      render action: "confirm"
+    else
+      render action: "edit"
+    end
+  end
+
   def update
     @staff_member = current_staff_member
     # if @staff_member.update_attributes(params[:staff_@staff_member])
@@ -20,9 +32,20 @@ class Staff::AccountsController < Staff::Base
 
     # @staff_member.assign_attributes(params[:staff_member])
     @staff_member.assign_attributes(staff_member_params)
-    if @staff_member.save
-      flash.notice = "アカウント情報を更新しました。"
-      redirect_to :staff_account
+    # if @staff_member.save
+    #   flash.notice = "アカウント情報を更新しました。"
+    #   redirect_to :staff_account
+    # else
+    #   render action: "edit"
+    # end
+    # ¥ 2.ch.9 章末問題
+    if params[:commit]
+      if @staff_member.save
+        flash.notice = "アカウント情報を更新しました。"
+        redirect_to :staff_account
+      else
+        render action: "edit"
+      end
     else
       render action: "edit"
     end

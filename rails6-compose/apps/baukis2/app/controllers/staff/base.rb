@@ -1,4 +1,6 @@
 class Staff::Base < ApplicationController
+  # ¥ 2.ch5.1.4 ipアドレスによるアクセス制限
+  before_action :check_source_ip_address
   before_action :authorize
   before_action :check_account
   before_action :check_timeout # 20230806
@@ -12,6 +14,10 @@ class Staff::Base < ApplicationController
   end
 
   helper_method :current_staff_member
+
+  private def check_source_ip_address
+    raise IpAddressRejected unless AllowedSource.include?("staff", request.ip)
+  end
 
   private def authorize
     unless current_staff_member

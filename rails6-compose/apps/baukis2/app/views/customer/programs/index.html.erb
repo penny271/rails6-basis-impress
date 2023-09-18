@@ -1,0 +1,23 @@
+<%# ¥ 2.ch.8.1.3 プログラム一覧表示・詳細表示機能(顧客向け) %>
+<% @title = "プログラム⼀覧" %>
+<h1><%= @title %></h1>
+
+<div class="table-wrapper">
+  <%= paginate @programs %>
+
+  <table class="listing">
+    <tr>
+      <th>タイトル</th>
+      <th>申し込み開始⽇時</th>
+      <th>申し込み終了⽇時</th>
+      <th>最⼩参加者数</th>
+      <th>最⼤参加者数</th>
+      <th>アクション</th>
+    </tr>
+    <%# - collectionオプションをつけると、指定した変数の要素の数だけ部分テンプレートが表示されます。 %>
+    <%= render partial: "program", collection: @programs %>
+    <%# ^ as: :ローカル変数名 というオプションを使えば展開先のローカル変数を任意に変えられる %>
+  </table>
+
+  <%= paginate @programs %>
+</div>

@@ -3,11 +3,12 @@ class Customer::LoginForm
   include ActiveModel::Model
 
   # ¥ 下記はそのままフォームのフィールド名になる 20230723
-  attr_accessor :email, :password
+  attr_accessor :email, :password, :remember_me
+
+  def remember_me?
+    remember_me == "1"
+  end
 end
-
-
-
 
 #¥ フォームオブジェクト = データベースと無関係なフォームを作成している
 # 提供されたコードでは、Customer::LoginFormはActiveModel::Modelモジュールを含むプレーンなRubyクラスです。

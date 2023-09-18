@@ -13,7 +13,15 @@
 =end
 %>
     <%= stylesheet_link_tag 'customer', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%
+=begin
+%>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+<%
+=end
+%>
+    <%# ¥ 2.ch.9.1.4 顧客自身によるアカウント管理機能 %>
+    <%= javascript_pack_tag 'customer', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>

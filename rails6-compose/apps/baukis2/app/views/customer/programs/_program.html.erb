@@ -1,0 +1,13 @@
+<%# ¥ ¥ 2.ch.8.1.3 プログラム一覧表示・詳細表示機能(顧客向け) %>
+<%# * これは、@programsに含まれる各プログラムに対して、_program.html.erbパーシャルを一度だけレンダリングするようRailsに指示します。繰り返しごとにRailsは@programsの現在のアイテムをprogramというローカル変数に代入します。%>
+<%# * パーシャル_program.html.erbはその program 変数を使ってレンダリングされます。つまり、_program.html.erbの内部では@programsを直接参照しません。代わりに、現在レンダリングされているアイテムを表す programローカル変数を参照する。  %>
+<%# - rails側で collection: @programs のループを 自動的に programという変数に割り当てる %>
+<% p = ProgramPresenter.new(program, self) %>
+<tr>
+  <td><%= p.title %></td>
+  <td class="date"><%= p.application_start_time %></td>
+  <td class="date"><%= p.application_end_time %></td>
+  <td class="numeric"><%= p.min_number_of_participants %></td>
+  <td class="numeric"><%= p.max_number_of_participants %></td>
+  <td class="actions"><%= link_to("詳細", [ :customer, program ]) %></td>
+</tr>
