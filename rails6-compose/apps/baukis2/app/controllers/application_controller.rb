@@ -29,6 +29,11 @@ class ApplicationController < ActionController::Base
     render "errors/forbidden", status: 403
   end
 
+  # ¥ 2.ch.10.2.5 問い合わせ到着の通知 ajax
+  # *XHRはXMLHttpRequestの略で、「Ajaxによるリクエスト」を意味します。 request オブジェクト（本編6-3節参照）の xhr? メソッドは、リクエストがAjaxによるものかどうかを判定します
+  private def reject_non_xhr
+    raise ActionController::BadRequest unless request.xhr?
+  end
 end # end of class ApplicationController < ActionController::Base
 
 # 変更の目的は、レイアウトを決定する仕組みのカスタマイズです。通常は、コントローラ名と同じ名前のレイアウトが優先的に選択され、それが存在しなければ application という名前のレイアウトが選択されます。たとえば、 staff/top コントローラのアクションでERBテンプレートからHTML文書を生成する場合、まず app/views/layouts/staff/top.html.erb が第1候補で、 app/views/layouts/application.html.erb が第2候補となります。しかし、ここではまったく別の論理でレイアウトを決定しています。 2行目では layout メソッドでレイアウトを決定するためのメソッドを指定しています。 5行目の params は paramsオブジェクト を返すメソッドです。 params オブジェクトに関してはChapter 8で詳しく説明しますが、 params[:controller] で現在選択されているコントローラの名前を取得できます。コントローラの名前は"staff/top" のような形をしています。 String クラスのインスタンスメソッド match は引数に正規表現を取り、レシーバ（すなわちURLパス）がその正規表現と合致するかどうかを調べます。%r{ から}までが正規表現です。\A は文字列の先頭にマッチします。次の(staff|admin|customer) は"staff" または"admin" または"customer" にマッチします。最後の/ はスラッシュ記号（/）そのものにマッチします。 Regexp.last_match は正規表現にマッチした文字列に関する情報を保持する MatchData オブジェクトを返します。 Regexp.last_match[1] は正規表現に含まれる1番目の括弧で囲まれた部分にマッチした文字列を返します。つまり、 set_layout メソッドは全体として"staff" または"admin" または"customer" という文字列を返すことになります。この文字列がレイアウトの名前として使われることになるわけです。

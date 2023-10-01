@@ -18,6 +18,11 @@ class FormPresenter
     end
   end
 
+  # - rails文法: text_filed()
+  # text_field(オブジェクト名, メソッド名, HTML属性={} or イベント属性={})
+  # f.object
+  # f.text_field(メソッド名, HTML属性={} or イベント属性={})
+
   def text_field_block(name, label_text, options = {})
     markup(:div, class: "input-block") do |m|
       # m << label(name, label_text, class: options[:required] ? "required" : nil)
@@ -72,6 +77,20 @@ class FormPresenter
       m << error_messages_for(name)
     end
   end
+
+  # ¥ 2.ch.10.1.6 Ajax 顧客向け問い合わせフォーム
+  def text_area_block(name, label_text, options = {})
+    markup(:div, class: "input-block") do |m|
+      m << decorated_label(name, label_text, options)
+      m << text_area(name, options)
+      if options[:maxlength]
+        m.span "(#{options[:maxlength]}文字以内)", class: "instruction",
+          style: "float: right"
+      end
+      m << error_messages_for(name)
+    end
+  end
+
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   # - Railsでは、フォームビルダー（form_withやform_forで作成するようなもの）にはobjectという名前のメソッドがあり、フォームビルダーがフォームを構築している実際のモデルオブジェクト（たとえばStaffMemberやActiveRecordモデルのインスタンス）を返します。このオブジェクトはバリデートされ、潜在的なエラーが添付されます。
   # - ご質問に直接お答えすると、このオブジェクトはフォームビルダーのオブジェクトメソッドから生成され、フォームが構築されるモデルオブジェクトを参照します。
@@ -102,16 +121,10 @@ class FormPresenter
     end
   end
 
-  # # ¥ 条件により入力必須マークがついたラベルタグを作成する
-  private def decorated_label(name, label_text, options = {})
-    label(name, label_text, class: options[:required] ? "required" : nil)
-  end
-
   # ¥ 条件により入力必須マークがついたラベルタグを作成する
   def decorated_label(name, label_text, options = {})
     puts("label_name::: #{name}") # label_name::: application_start_date
     label(name, label_text, class: options[:required] ? "required" : nil)
   end
-
 end
 

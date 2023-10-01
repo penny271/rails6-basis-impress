@@ -12,4 +12,6 @@
     end
   %>
   <%= link_to "アカウント", :customer_account if current_customer %>
+  <%# ¥ 2.ch.10.1.6 Ajax 顧客向け問い合わせフォーム %>
+  <%= link_to "問い合わせ", :new_customer_message if current_customer %>
 </header>

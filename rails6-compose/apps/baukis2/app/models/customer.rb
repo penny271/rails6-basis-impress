@@ -21,6 +21,11 @@ class Customer < ApplicationRecord
   # * has_many メソッドの引数の単数形が source オプションの値と等しい場合、 source オプションは省略できます
   has_many :programs, through: :entries
 
+  # ¥ 2.ch.10.1.3 Ajax 顧客向け問い合わせフォーム
+  # - 関連付け outbound_messages では顧客が送信したメッセージ（問い合わせ、返信への返信）のリストを取得できます。関連付け inbound_messages では職員から受け取ったメッセージ（返信）のリストを取得できます
+  has_many :messages
+  has_many :outbound_messages, class_name: "CustomerMessage", foreign_key: "customer_id"
+  has_many :inbound_messages, class_name: "StaffMessage", foreign_key: "customer_id"
 
   # ¥ 20230814
   # - 記号->で Proc オブジェクトを作り、クラスメソッド has_many の第2引数に指定しています。この Proc オブジェクトは、関連付けの スコープ を示します。 Rails用語のスコープ（scope）は、モデルクラスの文脈では「検索の付帯条件」を意味します。9～10行の has_many メソッドは personal_phones という名前の関連付けを設定しています。基本的には、8行目で行われている関連付け phones と同様に Phone モデルと関連付けられています。ただし、個人電話番号だけを絞り込むために where(address_id: nil) という付帯条件を指定しています。 8～10 行の記述によりCustomerクラスには、phonesとpersonal_phonesという2 つのインスタンスメソッドが定義されます。前者は、顧客が持っているすべての電話番号（自宅電話番号、勤務先電話番号を含む）のリストを返します。後者は、顧客の個人電話番号（address_idカラムがNULLのレコード）だけを返します。 スコープには order(:id) のようなソート順も指定できます。フォームの中に電話番号が一定の順序で並ぶようにするためにこの指定を加えています。 なお、関連付け phones に autosave オプションが付いていないのは、自宅電話番号や勤務先電話番号の自動保存は Address モデル側で行われるからです。

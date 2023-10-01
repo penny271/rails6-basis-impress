@@ -1,0 +1,14 @@
+<%# ¥ ¥ 2.ch.10.1.6 Ajax 顧客向け問い合わせフォーム %>
+<% @title = "新規問い合わせ" %>
+<h1><%= @title %></h1>
+
+<div id="generic-form">
+<%# - resources :messages, only: [ :new, :create] do post :confirm, on: :collection end なので 下記の url: になる%>
+  <%= form_with model: @message, url: :confirm_customer_messages do |f| %>
+    <%= render "form", f: f %>
+    <div class="buttons">
+      <%= f.submit "確認画面へ進む" %>
+      <%= link_to "キャンセル", :customer_root %>
+    </div>
+  <% end %>
+</div>

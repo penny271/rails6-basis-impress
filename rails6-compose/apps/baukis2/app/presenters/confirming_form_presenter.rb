@@ -44,6 +44,19 @@ class ConfirmingFormPresenter
     end
   end
 
+  # ¥ 2.ch.10.1.67 Ajax 顧客向け問い合わせフォーム
+  def text_area_block(name, label_text, options = {})
+    markup(:div) do |m|
+      m << decorated_label(name, label_text)
+      value = object.send(name)
+      m.div(class: "field-value") do
+        # - 顧客が本文に入力した文字列の中に含まれる特殊文字をエスケープした上で、改行文字が含まれていれば、それを <br> タグで置き換えています。
+        m << ERB::Util.html_escape(value).gsub(/\n/, "<br>")
+      end
+      m << hidden_field(name, options)
+    end
+  end
+
   def decorated_label(name, label_text)
     label(name, label_text)
   end

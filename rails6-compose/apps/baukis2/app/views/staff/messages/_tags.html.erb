@@ -1,0 +1,39 @@
+<%# ¥ 2.ch.12.3.3 タグ付け %>
+<%
+=begin
+%>
+
+<div class="tags">
+  タグ：
+  <% Tag.all.each do |tag| %>
+    <% if tag.id == params[:tag_id].to_i %>
+      <span class="current_tag"><%= tag.value %></span>
+    <% else %>
+      <%= link_to tag.value, [ :staff, tag, :messages ] %>
+    <% end %>
+  <% end %>
+</div>
+
+<%
+=end
+%>
+<%# ¥ 2.ch.12.3.5 タグ付け - 引数を取るスコープ %>
+<div class="tags">
+  タグ：
+  <% Tag.all.each do |tag| %>
+    <% if tag.id == params[:tag_id].to_i %>
+      <span class="current_tag"><%= tag.value %></span>
+    <% elsif params[:action] == "index" %>
+      <%#- resourcesのオリジナルの動きで :index は この場合、url上で messagesになる %>
+      <%# url: http://baukis2.example.com:3000/messages %>
+      <%# タグクリック後url: http://baukis2.example.com:3000/tags/1/messages %>
+      <%= link_to tag.value, [ :staff, tag, :messages ] %>
+    <% else %>
+      <%# url:http://baukis2.example.com:3000/messages/inbound %>
+      <%# タグクリック後url: http://baukis2.example.com:3000/tags/1/messages/inbound %>
+      <%= link_to tag.value, [ params[:action].to_sym, :staff, tag, :messages ] %>
+    <% end %>
+  <% end %>
+</div>
+
+<div>params[:action]: <%= params[:action] %></div>

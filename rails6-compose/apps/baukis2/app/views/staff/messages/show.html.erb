@@ -1,0 +1,48 @@
+<%# ¥ ¥ 2.ch.11.2.1 ツリー構造 %>
+<% @title = "メッセージ詳細" %>
+<h1><%= @title %></h1>
+
+<div class="table-wrapper">
+<%# ¥ 2.ch.12.1.2 タグ付け %>
+<%
+=begin
+%>
+
+<% if @message.kind_of?(CustomerMessage) %>
+  <div class="links">
+    <%= link_to "返信する", new_staff_message_reply_path(@message) %>
+  </div>
+<% end %>
+
+<%
+=end
+%>
+  <%# ¥ 2.ch.12.3.4 タグ付け %>
+  <%= render "links" %>
+
+  <table class="attributes">
+    <% p = MessagePresenter.new(@message, self) %>
+    <tr><th>種類</th><td><%= p.type %></td></tr>
+    <tr><th>送信者</th><td><%= p.sender %></td></tr>
+    <tr><th>受信者</th><td><%= p.receiver %></td></tr>
+    <tr><th>件名</th><td><%= p.subject %></td></tr>
+    <tr><th>作成⽇時</th><td class="date"><%= p.created_at %></td></tr>
+    <%# ¥ 2.ch.12.2.3 タグ付け - Tag-it インストール %>
+    <tr>
+      <th>タグ</th>
+    <%# ¥ 2.ch.12.2.5 タグ付け - タグの追加・削除 %>
+      <td>
+        <%= markup(:ul, id: "tag-it", "data-message-id" => @message.id,
+            "data-path" => staff_tag_message_path(id: @message.id)) do |m|
+          @message.tags.each do |tag|
+            m.li tag.value
+          end
+        end %>
+      </td>
+    </tr>
+  </table>
+
+  <%# ¥ 2.ch.11.2.2 ツリー構造 %>
+  <div class="tree"><%= p.tree %></div>
+  <div class="body"><%= p.formatted_body %></div>
+</div>

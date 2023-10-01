@@ -1,5 +1,11 @@
-/* ¥ cssを完全に分離する */
+/* ¥ cssを完全に分離する
+// ¥ 2.ch.12.2.3 タグ付け - Tag-it yarn不可だったため CDNで代替した
+これらのtag-it関連のCSSファイルはnode_modulesディレクトリの下にインストールされています。
+*/
+
 /*
  *= require_tree ./shared
  *= require_tree ./staff
+ *= require jquery-ui-dist/jquery-ui
+ *= require tag-it/css/jquery.tagit
  */

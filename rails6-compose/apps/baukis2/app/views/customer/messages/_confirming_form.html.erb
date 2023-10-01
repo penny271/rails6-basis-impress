@@ -1,0 +1,7 @@
+<%# ¥ 2.ch.10.1.67 Ajax 顧客向け問い合わせフォーム %>
+<%= markup do |m|
+  p = ConfirmingFormPresenter.new(f, self)
+  m.div "以下の内容で問い合わせを送信します。よろしいですか？"
+  m << p.text_field_block(:subject, "件名")
+  m << p.text_area_block(:body, "本文")
+end %>

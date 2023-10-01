@@ -45,6 +45,32 @@ Rails.application.routes.draw do
           patch :update_all, on: :collection
         end
       end
+      # ¥ 2.ch.10.2.1 問い合わせ到着の通知
+      # messages/count というパスへのアクセスを Staff::AjaxController コントローラに振り向けています。このコントローラ名は、Railsの標準的な命名法から外れています。このコントローラはAjaxリクエスト専用のアクションが集められる特別なものなので、特別な名前を与えることにしました
+      get "messages/count" => "ajax#message_count"
+      # ¥ 2.ch.12.2.5 タグ付け - タグの追加・削除
+      # * POSTメソッドとDELETEメソッドの両方に対応したアクションのためのルーティングを定義しています。タグの追加・削除は後ほどAjaxにより実装するので、コントローラにはStaff::AjaxControllerを指定しています。また、問い合わせのデータベースレコードを特定できるようにURLパターンに:idを含めている点にも注意をしてください。
+      post "messages/:id/tag" => "ajax#add_tag", as: :tag_message
+      delete "messages/:id/tag" => "ajax#remove_tag"
+
+      # ¥ 2.ch.11.1.1 ツリー構造
+      #- inbound、 outbound、 deleted は、それぞれ「問い合わせ一覧」、「送信一覧」、「ゴミ箱」を表示するためのアクションです。いずれの場合も複数のデータベースレコードへのアクセスが発生するため、コレクションルーティングとして設定しています
+      # * これらはコレクションルートなので、メンバールートのように:idパラメータを必要としません。
+      resources :messages, only: [ :index, :show, :destroy ] do
+        get :inbound, :outbound, :deleted, on: :collection
+
+        # ¥ 2.ch.12.1.1 タグ付け
+        resource :reply, only: [ :new, :create] do
+          post :confirm
+        end
+      end
+      # ¥ 2.ch.12.3.2 タグ付け
+      # staff/tagsリソースにネストされたmessagesリソースを定義しています。コントローラは既存のstaff/messagesを利用します。
+      resources :tags, only: [] do
+        resources :messages, only: [ :index ] do
+          get :inbound, :outbound, :deleted, on: :collection
+        end
+      end
     end
   end
 
@@ -113,9 +139,20 @@ Rails.application.routes.draw do
           # cancel - PATCH /customer/programs/:program_id/entry/cancel
         end
       end
+      # ¥ 2.ch.10.1.5 Ajax 顧客向け問い合わせフォーム
+      # - confirm という3つのアクションを追加します。顧客アカウント編集用の確認画面を実装した9-2-1項「ルーティング」では、既にデータベース上に存在するレコードを書き換える処理だったため、確認用のアクション confirm をPATCHメソッドで呼ぶことにしました。一方、今回は新しいレコードを追加する処理のため、 confirm アクションをPOSTメソッドで呼んでいます。また、 confirm アクションは resources メソッドにネストされているため、コレクションルーティング（本編9-2-2「ルーティングの分類」参照）として指定をする必要があります。なぜなら、この指定をしない場合のURLパスは/mypage/messages/:message_id/confirm となり、不必要なパラメータ message_id が含まれてしまうからです
+      # resources :messages, only: [ :new, :create] do
+      # ¥ 2.ch.12.5演習問題
+      # resources :messages, only: [ :index, :show, :new, :create] do
+      # ¥ 2.ch.12.5演習問題 3
+      resources :messages, except: [ :edit, :update] do
+        post :confirm, on: :collection
+        resource :reply, only: [ :new, :create] do
+          post :confirm
+        end
+      end
     end
   end
-
 end
 
 # ¥ 4行目と5行目の末尾にある as オプションは、ルーティングに名前を付けるためのものです。こうしておけば、ERBテンプレートの中で:staff_login や:staff_session というシンボルを用いてURLパスを参照できるようになります。Baukis2では、設定ファイルによってURLパスが変化しますので、ルーティングへの名前付けは必須
